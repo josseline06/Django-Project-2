@@ -72,11 +72,17 @@ class SignUp(View):
 		location.save()
 		profile = Profile(user=user, location=location, phone=sign_up.cleaned_data['phone'], social_avatar=url_avatar)
 		profile.save()
-		if group_name == 'employees'
+		# Creando empleado:
+		if group_name == 'employees':
 			employee = EmployeeProfile(profile=profile, agency=sign_up.cleaned_data['agency'])
 			employee.save()
-
+		# Creando gerente:
+		if group_name == 'managers':
+			profile.is_manager = sign_up.cleaned_data['is_manager']
+			profile.save()
+		# Asignando grupo:
 		group = Group.objects.get(name=group_name)
 		user.groups.add(group)
+		
 		return JsonResponse({"response": "Yeah"})
 
