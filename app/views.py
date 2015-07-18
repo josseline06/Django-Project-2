@@ -1,9 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.base import View, TemplateView
-from django_gravatar import helpers as gravatar
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render
+from utils import user as utils
 from .models import *
 from .forms import *
 
@@ -34,55 +34,69 @@ class Calculator(View):
 		total = (values['width']*values['height']*values['depth']*values['weight'])/selected_rate.value + (selected_rate.selected_rate.percent*values['price'])/100
 		return JsonResponse({"response": total})
 
-# Registro de clientes,empleados y administradores
+# Registro de clientes
 class SignUp(View):
 	def post(self, request):
-		if request.POST.get('agency'):
-			sign_up	= EmployeeForm(request.POST, request.FILES)
-			group_name = 'employees'
-		elif request.POST.get('is_manager'):
-			sign_up	= AdminForm(request.POST, request.FILES)
-			if request.POST['is_manager']:
-				group_name = 'managers'
-			else:
-				group_name = 'administrators'
-		else:
-			sign_up	= SignUpForm(request.POST, request.FILES)
-			group_name = 'clients'
-
-		if not sign_up.is_valid():
-			return JsonResponse({"response": "Error"})
+		sign_up	= SignUpForm(request.POST, request.FILES)
 		
-		if not request.POST['avatar']:
-			url_avatar = gravatar.get_gravatar_url(email=request.POST['email'], default='identicon')
-		else:
-			url_avatar = request.POST['avatar']
-			
-		user = User.objects.filter(email=sign_up.cleaned_data['email'])
-
-		if user.count() > 0:
-			return JsonResponse({"response": "This email already exists"})
-
-		#Creando usuario:
-		user = User.objects.create_user(sign_up.cleaned_data['email'], sign_up.cleaned_data['email'], sign_up.cleaned_data['password'])
-		user.first_name = sign_up.cleaned_data['name']
-		user.last_name = sign_up.cleaned_data['last_name']
-		user.save()
-		location = Location(address=sign_up.cleaned_data['address'], postal_code=sign_up.cleaned_data['postal_code'], city=sign_up.cleaned_data['city'], country=sign_up.cleaned_data['country'])
-		location.save()
-		profile = Profile(user=user, location=location, phone=sign_up.cleaned_data['phone'], social_avatar=url_avatar)
-		profile.save()
-		# Creando empleado:
-		if group_name == 'employees':
-			employee = EmployeeProfile(profile=profile, agency=sign_up.cleaned_data['agency'])
-			employee.save()
-		# Creando gerente:
-		if group_name == 'managers':
-			profile.is_manager = sign_up.cleaned_data['is_manager']
-			profile.save()
+		profile = utils.create_user(sign_up,request.POST['avatar'])
+		if not profile:
+			if utils.state == utils.states.form_no_valid:
+				return JsonResponse({"response": "Error"})
+			if utils.state == utils.states.email_exists:	
+				return JsonResponse({"response": "This email already exists"})
+		
 		# Asignando grupo:
-		group = Group.objects.get(name=group_name)
-		user.groups.add(group)
-		
+		group = Group.objects.get(name='clients')
+		profile.user.groups.add(group)
+
 		return JsonResponse({"response": "Yeah"})
 
+# Registro de empleados
+@login_required
+@permission_required('app.add_employeeprofile')
+class NewEmployee(View):
+	def post(self, request):
+		new_employee = EmployeeForm(request.POST, request.FILES)
+		
+		profile = utils.create_user(new_employee,request.POST['avatar'])
+		if not profile:
+			if utils.state == utils.states.form_no_valid:
+				return JsonResponse({"response": "Error"})
+			if utils.state == utils.states.email_exists:	
+				return JsonResponse({"response": "This email already exists"})
+		# Agregando agencia:
+		employee = EmployeeProfile(profile=profile, new_employee.cleaned_data['agency'])
+		employee.save()
+		# Asignando grupo:
+		group = Group.objects.get(name='employees')
+		profile.user.groups.add(group)
+
+		return JsonResponse({"response": "Yeah"})
+
+# Registro de administradores
+@login_required
+@permission_required('app.add_agency')
+class NewAdmin(View):
+	def post(self, request):
+		new_admin = AdminForm(request.POST, request.FILES)
+		
+		profile = utils.create_user(new_admin,request.POST['avatar'])
+		if not profile:
+			if utils.state == utils.states.form_no_valid:
+				return JsonResponse({"response": "Error"})
+			if utils.state == utils.states.email_exists:	
+				return JsonResponse({"response": "This email already exists"})
+		# Verificando si es gerente de agencia:
+		if new_admin.cleaned_data['is_manager']:
+			profile.is_manager = True
+			profile.save()
+			group_name = 'managers'
+		else:
+			group_name = 'administrators'
+
+		# Asignando grupo:
+		group = Group.objects.get(name=group_name)
+		profile.user.groups.add(group)
+
+		return JsonResponse({"response": "Yeah"})

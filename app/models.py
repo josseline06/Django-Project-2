@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field import modelfields as phonemodel
-import datetime
 
 class User(AbstractUser):
 	class Meta:
