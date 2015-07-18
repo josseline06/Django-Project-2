@@ -1,0 +1,31 @@
+<div id="content" class="box box-element ui-draggable" style="display: block; position: relative; opacity: 1; z-index: 0;">
+          <div class="row">
+            <div class="col-md-8 col-sm-6">
+              <form id="create" class="col-md-6 col-sm-6 form-signin">   
+             <label>Producto</label>
+             <input id="product" type="text" class="form-control input-sm" name="username" placeholder="nombre del producto" required="" autofocus="" />
+             <br/>
+             <label>Fecha de emision</label>
+             <input id="date" type="date" class="form-control input-sm" name="password" placeholder="dd/mm/yy" required=""/> 
+             <br/>
+             <label>Fecha estimada de llegada</label>
+             <input id="date2" type="date" class="form-control input-sm" name="password" placeholder="dd/mm/yy" required=""/> 
+          </form>
+            </div>
+
+        <form id="create" class="col-md-4 col-sm-6 form-signin">
+           <label>Agencia origen </label>
+           <input id="agenciaO" type="text" class="form-control input-sm" name="Question" placeholder="Caracas" required=""/>    
+           <br/>
+           <label>Agencia destino</label>
+           <input id="agenciaD" type="text" class="form-control input-sm" name="Question" placeholder="Destino" required=""/>
+           <br/>
+           <label>Precio</label>
+           <input id="cost" type="number" class="form-control input-sm" name="Question" placeholder="1500" required=""/>
+           <br/>
+        </form>
+        <div class="col-md-12 col-sm-12">
+          <button class="btn btn-sm btn-primary center-block" type="button" onclick = "getView(_new)">Crear encomienda</button>
+        </div>
+      </div>
+    </div>

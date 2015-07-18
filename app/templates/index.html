@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>OWL Express</title>
+
+		<!-- CSS -->
+		{%load staticfiles%}
+		<!-- Bootstrap core CSS -->
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Font Awesome CSS -->
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+		<!-- Magnific-popup lightbox -->
+		<link href="{%static 'css/magnific-popup.css'%}" rel="stylesheet">
+		<!-- Simple text rotator -->
+		<link href="{%static 'css/simpletextrotator.css'%}" rel="stylesheet">
+		<!-- Animate css -->
+		<link href="{%static 'css/animate.css'%}" rel="stylesheet">
+		<!-- Custom styles CSS -->
+		<link href="{% static 'css/owl.theme.css'%}" rel="stylesheet">
+		<link href="{% static 'css/owl.carousel.css'%}" rel="stylesheet">
+		<link href="{% static 'css/owl.style.css'%}" rel="stylesheet">
+	</head>
+	<body>
+		<!-- Header-->
+		<h1>Hola!</h1>
+		<form method="post" action="app:sign_up">
+			{{form}}
+		</form>
+		<!-- Javascript files -->
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<!-- Background slider -->
+		<script src="{%static 'js/jquery.backstretch.min.js'%}"></script>
+		<!-- OwlCarousel -->
+		<script src="{%static 'js/owl.carousel.min.js'%}"></script>
+		<!-- Modal for portfolio -->
+		<script src="{%static 'js/jquery.magnific-popup.min.js'%}"></script>
+		<!-- Text rotator -->
+		<script src="{%static 'js/jquery.simple-text-rotator.min.js'%}"></script>
+		<!-- Waypoints -->
+		<script src="{%static 'js/jquery.waypoints.js'%}"></script>
+		<!-- CountTo  -->
+		<script src="{%static 'js/jquery.countTo.js'%}"></script>
+		<!-- WOW - Reveal Animations When You Scroll -->
+		<script src="{%static 'js/wow.min.js'%}"></script>   
+		<!-- Smooth scroll -->
+		<script src="{%static 'js/smoothscroll.js'%}"></script>
+		<!-- Fitvids -->
+		<script src="{%static 'js/jquery.fitvids.js'%}"></script>
+		<!-- Custom scripts -->
+		<script src="{%static 'js/custom.js'%}"></script>
+		<!-- Views Scripts -->
+		<script src="{%static 'js/dynamic.js'%}"></script>
+	</body>
+</html>

@@ -20,9 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = 'e!s%p-&(d98&)^b8&3v59!%m#xi!uv^bqo3d(^fle)n0z)b7!_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -37,12 +39,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social.apps.django_app.default', # Autenticacion con redes sociales
+    'django_gravatar', # gravatar
+    'app', # Aplicacion
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -61,12 +66,29 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
+                'django.core.context_processors.debug',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.tz',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
+            ]
         },
     },
 ]
+
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookAppOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'owlexpress.wsgi.application'
 
@@ -80,10 +102,12 @@ DATABASES = {
         'NAME': 'owl',
     	'USER': 'postgres',
     	'PASSWORD': 'postgres',
-    	'HOST':'127.0.0.1',
-    	'PORT':'5432',
+    	'HOST':'localhost',
+    	'PORT':'',
     }
 }
+
+AUTH_USER_MODEL = 'app.User'
 
 
 # Internationalization
@@ -91,7 +115,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Caracas'
 
 USE_I18N = True
 
@@ -104,3 +128,38 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Media files
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = '/media/'
+
+
+# Python Social Auth
+
+#SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '407384316123569'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'f24cca91dc045745f0f95689e21df2e4'
+SOCIAL_AUTH_FACEBOOK_SCOPE =['email']
+
+SOCIAL_AUTH_TWITTER_KEY = '2T9OZDRYxiaNXrBTaKv0x9C6K'
+SOCIAL_AUTH_TWITTER_SECRET = '4rKsx995n2VkZLjQYXV8xlRcyuH1sQwdZItwLrHbLDbfHSumw4'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '385257243539-o46nsdibckdmem4ht56j4oar3au25dri.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'K1bj-GHjx_se7qVIVDZ2WRE3'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'app.social.pipeline.get_avatar'
+)

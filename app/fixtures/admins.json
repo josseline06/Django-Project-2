@@ -1,0 +1,26 @@
+[
+	{
+		"model": "app.user",
+		"pk": 1,
+		"fields": {
+			"password": "pbkdf2_sha256$20000$oKXfDrojcah0$lWVJ1wmG7yAs9acJJPoT5OO9BdAlPyDHTcmaElmgbxE=",
+			"username": "josseline.perdomo@owlexpress.com",
+			"first_name": "josseline",
+			"last_name": "perdomo",
+			"email": "josseline.perdomo@owlexpress.com",
+			"groups": [1]
+		}
+	},
+	{
+		"model": "app.user",
+		"pk": 2,
+		"fields": {
+			"password": "pbkdf2_sha256$20000$1QzEtgVN1WiR$W71TyWQDnE/5A73q2lzb+Vja0Ov/0Pn2MqEp5uLeedk=",
+			"username": "abel.arce@owlexpress.com",
+			"first_name": "abel",
+			"last_name": "arce",
+			"email": "abel.arce@owlexpress.com",
+			"groups": [1]
+		}
+	}
+]
