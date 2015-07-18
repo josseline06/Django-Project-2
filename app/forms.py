@@ -2,7 +2,7 @@ from django import forms
 from phonenumber_field import formfields as phonefield
 from .models import *
 
-#Registro - Cliente
+#Registro
 class SignUpForm(forms.Form):
 	name = forms.CharField(min_length=3, max_length=30)
 	last_name = forms.CharField(min_length=2, max_length=30)
@@ -14,13 +14,13 @@ class SignUpForm(forms.Form):
 	address = forms.CharField(min_length=5, max_length=1000)
 	phone = phonefield.PhoneNumberField()
 
-# Calculadora de envio
-class CalculatorForm(forms.Form):
-	weight = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	width = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	height = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	depth = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	price = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
+# Para empleado:
+class EmployeeForm(SignUpForm):
+	agency = forms.ChoiceField(choices=Agency.objects.filter(is_active=True))
+
+# Para administrador:
+class AdminForm(SignUpForm):
+	is_manager = forms.BooleanField()
 
 # Perfil
 class ProfileForm(forms.Form):
@@ -34,14 +34,13 @@ class ProfileForm(forms.Form):
 	address = forms.CharField(min_length=5, max_length=1000)
 	phone = phonefield.PhoneNumberField()
 
-# Empleado
-class EmployeeForm(SignUpForm):
-	agency = forms.ChoiceField(choices=Agency.objects.filter(is_active=True))
-
-# Administrador
-class AdminForm(SignUpForm):
-	agency = forms.ChoiceField(choices=Agency.objects.filter(is_active=True))
-	is_manager = forms.BooleanField()
+# Calculadora de envio
+class CalculatorForm(forms.Form):
+	weight = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	width = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	height = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	depth = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	price = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
 
 # Agencia
 class AgencyForm(forms.Form):

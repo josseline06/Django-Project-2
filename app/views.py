@@ -34,10 +34,21 @@ class Calculator(View):
 		total = (values['width']*values['height']*values['depth']*values['weight'])/selected_rate.value + (selected_rate.selected_rate.percent*values['price'])/100
 		return JsonResponse({"response": total})
 
-# Registro de clientes
+# Registro de clientes,empleados y administradores
 class SignUp(View):
 	def post(self, request):
-		sign_up	= SignUpForm(request.POST, request.FILES)
+		if request.POST.get('agency'):
+			sign_up	= EmployeeForm(request.POST, request.FILES)
+			group_name = 'employees'
+		elif request.POST.get('is_manager'):
+			sign_up	= AdminForm(request.POST, request.FILES)
+			if request.POST['is_manager']:
+				group_name = 'managers'
+			else:
+				group_name = 'administrators'
+		else:
+			sign_up	= SignUpForm(request.POST, request.FILES)
+			group_name = 'clients'
 
 		if not sign_up.is_valid():
 			return JsonResponse({"response": "Error"})
@@ -51,7 +62,7 @@ class SignUp(View):
 
 		if user.count() > 0:
 			return JsonResponse({"response": "This email already exists"})
-			
+
 		#Creando usuario:
 		user = User.objects.create_user(sign_up.cleaned_data['email'], sign_up.cleaned_data['email'], sign_up.cleaned_data['password'])
 		user.first_name = sign_up.cleaned_data['name']
@@ -61,23 +72,11 @@ class SignUp(View):
 		location.save()
 		profile = Profile(user=user, location=location, phone=sign_up.cleaned_data['phone'], social_avatar=url_avatar)
 		profile.save()
-		group = Group.objects.get(name='clients')
+		if group_name == 'employees'
+			employee = EmployeeProfile(profile=profile, agency=sign_up.cleaned_data['agency'])
+			employee.save()
+
+		group = Group.objects.get(name=group_name)
 		user.groups.add(group)
 		return JsonResponse({"response": "Yeah"})
 
-# Registro de agencias
-"""
-@login_required
-@permission_required('app.add_agency')
-class NewAgency(View):
-	def post(self, request):
-
-@login_required
-@permission_required('app.add_employeeprofile')
-class Employee(View):
-	def post(self, request):
-"""
-
-@login_required
-@permission_required('app.add_agency')
-class NewAdmin()
