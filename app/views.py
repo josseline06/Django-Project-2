@@ -205,3 +205,5 @@ class Comment(View):
 		data = new_package.cleaned_data
 		comment = Comment(user=request.user, comment=data['comment'])
 		comment.save()
+
+		return JsonResponse({"response": "ok"})
