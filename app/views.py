@@ -3,9 +3,9 @@ from django.views.generic.base import View, TemplateView
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render
-from .utils import * as utils
 from .models import *
 from .forms import *
+import .utils # helpers personalizados
 
 # Pagina principal
 class Index(View):
@@ -21,17 +21,14 @@ class Calculator(View):
 		try:
 			selected_rate = Rate.objects.get(key_name=rate)
 		except Rate.DoesNotExist:
-			selected_rate = None
-
-		if selected_rate is None:
-			#redireccionar a 404 template
+			# Redireccionar a vista de 404
 			return JsonResponse({"response": "404 error"})
 		
 		calculator = CalculatorForm(request.POST, request.FILES)
 		if not calculator.is_valid():
 			return JsonResponse({"response": "error in data"})
-		values = calculator.cleaned_data
-		total = (values['width']*values['height']*values['depth']*values['weight'])/selected_rate.value + (selected_rate.selected_rate.percent*values['price'])/100
+		data = calculator.cleaned_data
+		total = utils.package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
 		return JsonResponse({"response": total})
 
 # Registro de clientes
@@ -54,8 +51,8 @@ class SignUp(View):
 
 # Registro de empleados
 @login_required
-@permission_required('app.add_employeeprofile')
-class NewEmployee(View):
+class Employee(View):
+	@permission_required('app.add_employeeprofile')
 	def post(self, request):
 		new_employee = EmployeeForm(request.POST, request.FILES)
 		
@@ -66,7 +63,7 @@ class NewEmployee(View):
 			if utils.state == utils.states.email_exists:	
 				return JsonResponse({"response": "This email already exists"})
 		# Agregando agencia:
-		employee = EmployeeProfile(profile=profile, new_employee.cleaned_data['agency'])
+		employee = EmployeeProfile(profile=profile, agency=new_employee.cleaned_data['agency'])
 		employee.save()
 		# Asignando grupo:
 		group = Group.objects.get(name='employees')
@@ -76,8 +73,8 @@ class NewEmployee(View):
 
 # Registro de administradores
 @login_required
-@permission_required('app.add_agency')
-class NewAdmin(View):
+class Admin(View):
+	@permission_required('app.add_agency')
 	def post(self, request):
 		new_admin = AdminForm(request.POST, request.FILES)
 		
@@ -103,8 +100,8 @@ class NewAdmin(View):
 
 # Registro de agencias
 @login_required
-@permission_required('app.add_agency')
-class NewAgency(View):
+class Agency(View):
+	@permission_required('app.add_agency')
 	def post(self, request):
 		new_agency = AgencyForm(request.POST, request.FILES)
 
@@ -112,42 +109,99 @@ class NewAgency(View):
 			return JsonResponse({"response": "Error"})
 
 		# Agregando nueva agencia:
-		key_name = utils.create_key_name(new_agency.cleaned_data['name'])
+		data = new_agency.cleaned_data
+		key_name = utils.create_key_name(data['name'])
 		try:
 			agency = Agency.objects.get(key_name=key_name)
-			return JsonResponse({"response": "An agency already exists in that name"})
 		except Agency.DoesNotExist:
-			location = utils.create_location(new_agency.cleaned_data['address'], new_agency.cleaned_data['postal_code'], new_agency.cleaned_data['city'], new_agency.cleaned_data['country'])
+			location = utils.create_location(data['address'], data['postal_code'], data['city'], data['country'])
 			try:
 				agency = Agency.objects.get(location=location)
-				return JsonResponse({"response": "An agency already exists in that address"})
 			except Agency.DoesNotExist:
-				agency = Agency(key_name=key_name, name=new_agency.cleaned_data['name'], manager=new_agency.cleaned_data['manager'], location=location, phone=new_agency.cleaned_data['phone'])
+				agency = Agency(key_name=key_name, name=data['name'], manager=data['manager'], location=location, phone=data['phone'])
 				agency.save()
 				return JsonResponse({"response": "Yeah"})
+			return JsonResponse({"response": "An agency already exists in that address"})
+		return JsonResponse({"response": "An agency already exists in that name"})
+
 
 # Registro de tarifas
 @login_required
-@permission_required('app.add_rate')
-class NewRate(View):
+class Rate(View):
+	@permission_required('app.add_rate')
 	def post(self, request):
 		new_rate = RateForm(request.POST, request.FILES)
 
 		if not new_rate.is_valid():
 			return JsonResponse({"response": "Error"})
 
-		# Agregando nueva agencia:
-		key_name = utils.create_key_name(new_rate.cleaned_data['name'])
+		# Agregando nueva tarifa:
+		data = new_rate.cleaned_data
+		key_name = general_utils.create_key_name(data['name'])
 		try:
 			rate = Rate.objects.get(key_name=key_name)
-			return JsonResponse({"response": "An rate already exists with this name"})
 		except Rate.DoesNotExist:
 			try:
-				rate = Rate.objects.get(value=new_rate.cleaned_data['value'], percent=new_rate.cleaned_data['percent'])
-				return JsonResponse({"response": "An rate already exists with those values"})
+				rate = Rate.objects.get(value=data['value'], percent=data['percent'])
 			except Agency.DoesNotExist:
-				rate = Rate(key_name=key_name, name=new_rate.cleaned_data['name'], value=new_rate.cleaned_data['value'], percent=new_rate.cleaned_data['percent'], description=new_rate.cleaned_data['description'])
+				rate = Rate(key_name=key_name, name=data['name'], value=data['value'], percent=data['percent'], description=data['description'])
 				rate.save()
 				return JsonResponse({"response": "Yeah"})
+			return JsonResponse({"response": "An rate already exists with those values"})
+		return JsonResponse({"response": "An rate already exists with this name"})
 
 # Registro de envio:
+@login_required
+class Shipment(View):
+	@permission_required('app.add_shipment')
+	def post(self, request):
+		new_shipment = ShipmentForm(request.POST, request.FILES)
+
+		if not new_shipment.is_valid():
+			return JsonResponse({"response": "Error"})
+
+		data = new_shipment.cleaned_data
+		destination = utils.create_location(data['address'], data['postal_code'], data['city'], data['country'])
+		try:
+			profile = Profile.objects.get(user=request.user)
+			user = EmployeeProfile.objects.get(profile=profile)
+		except (Profile.DoesNotExist, EmployeeProfile.DoesNotExist) as e:
+			return JsonResponse({"response": "Error"})
+		shipment = Shipment(rate=selected_rate, sender=data['sender'], receiver=data['receiver'], checker=request.user, agency=user.agency, destination=destination, description=data['description'])
+		shipment.save()
+		# Estatus creado:
+		status = Status(shipment=shipment) 
+		status.save()
+
+		return JsonResponse({"response": "Yeah"})
+
+# Registro de paquetes asociados a un envio:
+@login_required
+class Package(View):
+	@permission_required('app.add_shipment')
+	def post(self, request):
+		new_package = PackageForm(request.POST, request.FILES)
+
+		if not new_package.is_valid():
+			return JsonResponse({"response": "Error"})
+
+		data = new_package.cleaned_data
+		cost = utils.package_cost(data['shipment'].rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
+		package = Package(shipment=data['shipment'], weight=data['weight'], width=data['width'], height=data['height'], depth=data['depth'], price=data['price'], cost=cost, description=data['description'])
+		package.save()
+
+		return JsonResponse({"response": cost})
+
+# Crear un comentario
+@login_required
+class Comment(View):
+	@permission_required('app.add_comment')
+	def post(self, request):
+		new_comment = CommentForm(request.POST, request.FILES)
+
+		if not new_comment.is_valid():
+			return JsonResponse({"response": "Error"})
+
+		data = new_package.cleaned_data
+		comment = Comment(user=request.user, comment=data['comment'])
+		comment.save()

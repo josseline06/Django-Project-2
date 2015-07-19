@@ -10,11 +10,14 @@ urlpatterns = [
     url(r'^calculator/rates/(?P<rate>\w+)/$', views.Calculator.as_view(), name='calculator'),
 
     # Login
-    url(r'^login/', 'django.contrib.auth.views.login', name='login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
 
     # Logout
-    url(r'^logout/', 'django.contrib.auth.views.logout_then_login', name='logout'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
 
     # Cliente - Registrar
-    url(r'^sign_up/', views.SignUp.as_view(), name='sign_up'),
+    url(r'^sign_up/$', views.SignUp.as_view(), name='sign_up'),
+
+    url(r'^shipment/$', views.Shipment.as_view(), name='shipment'),
+
 ]

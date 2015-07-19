@@ -2,15 +2,17 @@ from enum import Enum
 from django_gravatar import helpers as gravatar
 from app.models import User, Location, Profile
 
-# Estados:
-class states(Enum):
-	ok = 1
-	form_no_valid = 2
-	email_exists = 3
-	
-state = states.ok
+# Genera un nombre clave 
+def create_key_name(string):
+	result = string.lowercase()
+	return result.replace(' ', '_')
 
-# Funciones: 
+# Calcula el costo de un paquete 
+def package_cost(rate, width, height, depth, weight, price):
+	return (width*height*depth*weight)/rate.value + (rate.percent*price)/100
+
+# ----- Caso modificaciones sobre el modelo User y Profile -----
+# Crea una lugar: 
 def create_location(address, postal_code, city, country):
 	try:
 		location = Location.objects.get(address=address, postal_code=postal_code, city=city, country=country)
@@ -18,6 +20,15 @@ def create_location(address, postal_code, city, country):
 		location = Location(address=address, postal_code=postal_code, city=city, country=country)
 		location.save()
 	return location
+
+# Crea el perfil basico de un usuario:
+# Estados:
+class states(Enum):
+	ok = 1
+	form_no_valid = 2
+	email_exists = 3
+	
+state = states.ok
 
 def create_user(form, avatar):
 	if not form.is_valid():
@@ -44,5 +55,3 @@ def create_user(form, avatar):
 
 	state = states.email_exists
 	return None
-	
-	

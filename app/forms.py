@@ -59,16 +59,6 @@ class RateForm(forms.Form):
 	percent = forms.DecimalField(max_digits=5, decimal_places=2, min_value=0.01) #K%
 	description = forms.CharField(min_length=5, max_length=1000)
 
-# Paquete
-class PackageForm(forms.Form):
-	weight = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	width = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	height = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	depth = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
-	price = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
-	cost = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
-	description = forms.CharField(required=False, max_length=1000)
-
 # Envio
 class ShipmentForm(forms.Form):
 	sender = forms.ChoiceField(choices=User.objects.filter(is_active=True, groups__name='clients'))
@@ -79,6 +69,17 @@ class ShipmentForm(forms.Form):
 	city = forms.CharField(min_length=3, max_length=30)
 	postal_code = forms.CharField(min_length=3, max_length=15)
 	description = forms.CharField(max_length=1000, required=False)
+
+# Paquete
+class PackageForm(forms.Form):
+	shipment = forms.ChoiceField(choices=Shipments.objects.all())
+	weight = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	width = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	height = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	depth = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
+	price = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
+	cost = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
+	description = forms.CharField(required=False, max_length=1000)
 
 # Status de envio
 class StatusForm(forms.ModelForm):

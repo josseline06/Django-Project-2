@@ -61,7 +61,7 @@ class Shipment(models.Model):
 	receiver = models.ForeignKey(User, related_name='receiver_fk', limit_choices_to=models.Q(groups__name = 'clients'))
 	checker = models.ForeignKey(User, related_name='checker_fk', limit_choices_to=models.Q(groups__name = 'employees'))
 	agency = models.ForeignKey(Agency, related_name='agency_fk')
-	location = models.OneToOneField(Location, related_name='shipment_location_fk')
+	destination = models.OneToOneField(Location, related_name='shipment_destination_fk')
 	description = models.CharField(max_length=1000, null=True)
 
 class Package(models.Model):
@@ -81,6 +81,7 @@ class Status(models.Model):
 		('received', 'Received'),
 		('committed', 'Commited')
 	)
+	shipment = models.ForeignKey(Shipment, related_name='status_shipment_fk')
 	status = models.CharField(max_length=9, choices=STATUS, default='created')
 	date = models.DateTimeField(auto_now_add=True)
 
