@@ -16,11 +16,17 @@ class Location(models.Model):
 	city = models.CharField(max_length=30)
 	country = models.CharField(max_length=30)
 
+	class Meta:
+		unique_together = ('address','postal_code', 'city', 'country')
+
 class Agency(models.Model):
+	key_name = models.CharField(max_length=60, primary_key=True)
+	name = models.CharField(max_length=60, unique=True)
 	manager = models.OneToOneField(User, related_name='manager_fk', limit_choices_to=models.Q(groups__name = 'managers'))
 	location = models.OneToOneField(Location, related_name='agency_location_fk')
 	phone = phonemodel.PhoneNumberField()
 	is_active = models.BooleanField(default=True)
+	date_joined = models.DateTimeField(auto_now_add=True)
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, related_name='profile_fk')
@@ -37,13 +43,14 @@ class EmployeeProfile(models.Model):
 	agency = models.ForeignKey(Agency, related_name='employee_agency_fk')
 
 class Rate(models.Model):
-	name = models.CharField(max_length=30, unique=True)
-	key_name = models.CharField(max_length=15, unique=True)
+	key_name = models.CharField(max_length=60, primary_key=True)
+	name = models.CharField(max_length=60, unique=True)
 	value = models.DecimalField(max_digits=12, decimal_places=2) #Constante 
 	percent = models.DecimalField(max_digits=5, decimal_places=2) #K%
 	date = models.DateTimeField(auto_now_add=True)
 	is_active = models.BooleanField(default=True)
-	description = models.CharField(max_length=1000, null=True)
+	description = models.CharField(max_length=1000)
+	date_joined = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		unique_together = ('value','percent')

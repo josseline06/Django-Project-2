@@ -44,18 +44,20 @@ class CalculatorForm(forms.Form):
 
 # Agencia
 class AgencyForm(forms.Form):
+	name = forms.CharField(min_length=3, max_length=60)
 	address = forms.CharField(min_length=5, max_length=1000)
 	city = forms.CharField(max_length=30)
 	country = forms.CharField(max_length=30)
+	postal_code = forms.CharField(min_length=3, max_length=15)
 	phone = phonefield.PhoneNumberField()
 	manager = forms.ChoiceField(choices=User.objects.filter(is_active=True, groups__name='managers'))
 
 # Tarifa
 class RateForm(forms.Form):
-	name = forms.CharField(min_length=5, max_length=30)
+	name = forms.CharField(min_length=5, max_length=60)
 	value = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0.01) #Constante 
 	percent = forms.DecimalField(max_digits=5, decimal_places=2, min_value=0.01) #K%
-	description = forms.CharField(max_length=1000)
+	description = forms.CharField(min_length=5, max_length=1000)
 
 # Paquete
 class PackageForm(forms.Form):
