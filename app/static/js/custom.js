@@ -35,8 +35,8 @@
 		/* ---------------------------------------------- */
 
 		$('#intro').backstretch([
-			'../static/assets/images/bg1.jpg',
-			'../static/assets/images/bg2.jpg',
+			'static/images/index/bg1.jpg',
+			'static/images/index/bg2.jpg',
 		], {duration: 9000, fade: 750});
 
 		/* ---------------------------------------------- /*
@@ -204,4 +204,19 @@
 
 	});
 
+
+	$('#btn_next_signin').on('click',function(e) {
+		$("#first").removeClass('selected');
+		$("#second").addClass('selected');
+	});
+
+	$('#btn_last_signin').on('click',function(e) {
+		$("#second").removeClass('selected');
+		$("#first").addClass('selected');
+	});
+
+	$('.field-tel').intlTelInput();
+
+
 })(jQuery);
+

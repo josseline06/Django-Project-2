@@ -135,6 +135,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
+#URL LOGIN
+LOGIN_URL = 'app:index'
+LOGIN_REDIRECT_URL = 'app:index'
+LOGOUT_URL = 'app:index'
 
 # Python Social Auth
 
@@ -163,3 +167,17 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
     'app.social.pipeline.get_avatar'
 )
+
+# Configuracion de correo
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'mail.privateemail.com'
+
+EMAIL_HOST_USER = 'mail@owlexpress.me'
+
+EMAIL_HOST_PASSWORD = 'owlexpressadminmail'
+
+EMAIL_PORT = 26
+
+EMAIL_USE_TLS = True

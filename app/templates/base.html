@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>{% block title %}{% endblock %}</title>
+
+		<!-- CSS-->
+		{%load staticfiles%}
+		<!-- Bootstrap core CSS -->
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Font Awesome CSS -->
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+		
+		<!-- Calculator Style-->
+		<link href="{% static 'css/calculator/reset.css'%}" rel="stylesheet">
+		<link href="{% static 'css/calculator/style.css'%}" rel="stylesheet">
+
+		<!-- Authenticacion Style-->
+		<link href="{% static 'css/auth/reset.css'%}" rel="stylesheet">
+		<link href="{% static 'css/auth/style.css'%}" rel="stylesheet">
+		
+		<!-- Carousel Style-->
+		<link href="{% static 'css/carousel_comments/style.css'%}" rel="stylesheet">
+
+		<!-- Magnific-popup lightbox -->
+		<link href="{%static 'css/magnific-popup.css'%}" rel="stylesheet">
+		<!-- Simple text rotator -->
+		<link href="{%static 'css/simpletextrotator.css'%}" rel="stylesheet">
+		<!-- Animate css -->
+		<link href="{%static 'css/animate.css'%}" rel="stylesheet">
+		<!-- Custom styles CSS -->
+		<link href="{% static 'css/owl.theme.css'%}" rel="stylesheet">
+		<link href="{% static 'css/owl.carousel.css'%}" rel="stylesheet">
+		<link href="{% static 'css/owl.style.css'%}" rel="stylesheet">
+
+		<!-- Cellphone CSS-->
+		<link href="{% static 'css/intlTelInput.css'%}" rel="stylesheet">
+		
+	</head>
+	<body>
+		<!-- Header-->
+		{% block header %}
+
+		{% endblock %}
+	
+
+		<!--Content Main -->
+		{% block content %}
+
+
+		{% endblock %}
+
+		<!-- Footer -->
+
+	        <footer id="footer">
+
+	            <div class="container">
+
+	                <div class="row">
+
+	                    <div class="col-md-12">
+	                        <p class="copy">
+	                            © 2015 OwlExpress, All Rights Reserved.
+	                        </p>
+	                    </div>
+
+	                </div>
+
+	            </div>
+
+	        </footer>
+
+		<!-- Footer end -->
+
+		<!-- Javascript files -->
+		<!-- jQuery -->
+
+		<!--Modernizr-->
+	    <script src="{%static 'js/modernizr.js'%}"></script>
+
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+		<!--Telephone Script-->
+		<script src="{%static 'js/intlTelInput.min.js'%}"></script>
+
+		<!-- Bootstrap JS -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<!-- Background slider -->
+		<script src="{%static 'js/jquery.backstretch.min.js'%}"></script>
+		<!-- OwlCarousel -->
+		<script src="{%static 'js/owl.carousel.min.js'%}"></script>
+		<!-- Modal for portfolio -->
+		<script src="{%static 'js/jquery.magnific-popup.min.js'%}"></script>
+		<!-- Text rotator -->
+		<script src="{%static 'js/jquery.simple-text-rotator.min.js'%}"></script>
+		<!-- Waypoints -->
+		<script src="{%static 'js/jquery.waypoints.js'%}"></script>
+		<!-- CountTo  -->
+		<script src="{%static 'js/jquery.countTo.js'%}"></script>
+		<!-- WOW - Reveal Animations When You Scroll -->
+		<script src="{%static 'js/wow.min.js'%}"></script>   
+		<!-- Smooth scroll -->
+		<script src="{%static 'js/smoothscroll.js'%}"></script>
+		<!-- Fitvids -->
+		<script src="{%static 'js/jquery.fitvids.js'%}"></script>
+		<!-- Custom scripts -->
+		<script src="{%static 'js/custom.js'%}"></script>
+		<!-- Views Scripts -->
+		<script src="{%static 'js/dynamic.js'%}"></script>
+
+		<!--Dashboard Scripts-->
+	    <script src="{%static 'js/morris/raphael.min.js'%}"></script>
+	    <script src="{%static 'js/morris/morris.js'%}"></script>
+	    <script src="{%static 'js/morris/morris-data.js'%}"></script>
+
+		<!--Calculator Scripts-->
+		<script src="{%static 'js/calculator/velocity.min.js'%}"></script>
+	    <script src="{%static 'js/calculator/main.js'%}"></script>
+
+	    <!--Authentication Script-->
+	   	<script src="{%static 'js/auth/main.js'%}"></script>
+
+		<!--Carousel Comments-->
+		<script src="{%static 'js/carousel_comments/masonry.pkgd.min.js'%}"></script>
+		<script src="{%static 'js/carousel_comments/jquery.flexslider-min.js'%}"></script>
+		<script src="{%static 'js/carousel_comments/main.js'%}"></script>
+		
+	</body>
+</html>

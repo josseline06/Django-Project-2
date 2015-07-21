@@ -338,6 +338,10 @@ a,
 	padding: 120px 0;
 }
 
+.section{
+	background: #fff;
+}
+
 .callout {
 	background: #F5F5F5;
 }
@@ -457,7 +461,7 @@ h3 > .fa {
 }
 
 .navbar-custom .navbar-nav > li.active {
-	border-bottom: 3px solid #000;
+	border-bottom: 3px solid #EF4836;
 }
 
 .navbar-custom .navbar-toggle .icon-bar {
@@ -487,7 +491,7 @@ h3 > .fa {
 }
 
 .navbar-color .navbar-nav > li.active {
-	border-bottom: 3px solid #222;
+	border-bottom: 3px solid #EF4836;
 }
 
 .custom-collapse .navbar-nav {

@@ -22,22 +22,22 @@ class Location(models.Model):
 class Agency(models.Model):
 	key_name = models.CharField(max_length=60, primary_key=True)
 	name = models.CharField(max_length=60, unique=True)
+	location = models.ForeignKey(Location, related_name='agency_location_fk')
 	manager = models.OneToOneField(User, related_name='manager_fk', limit_choices_to=models.Q(groups__name = 'managers'))
-	location = models.OneToOneField(Location, related_name='agency_location_fk')
 	phone = phonemodel.PhoneNumberField()
 	is_active = models.BooleanField(default=True)
 	date_joined = models.DateTimeField(auto_now_add=True)
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, related_name='profile_fk')
-	location = models.OneToOneField(Location, related_name='user_location_fk')
+	location = models.ForeignKey(Location, related_name='profile_location_fk')
 	phone = phonemodel.PhoneNumberField()
 	social_avatar = models.URLField()
 	avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 	last_edit = models.DateTimeField(auto_now_add=True)
 	#Aplica solo para administradores:
 	is_manager = models.BooleanField(default=False)
-	
+
 class EmployeeProfile(models.Model):	
 	profile = models.OneToOneField(Profile, related_name='employee_profile_fk', primary_key=True)
 	agency = models.ForeignKey(Agency, related_name='employee_agency_fk')

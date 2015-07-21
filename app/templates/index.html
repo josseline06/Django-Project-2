@@ -1,60 +1,151 @@
-<!DOCTYPE html>
-<html lang="es">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-		<title>OWL Express</title>
+{% block title %}
+	OwlExpressInicio
+{% endblock %}
 
-		<!-- CSS -->
-		{%load staticfiles%}
-		<!-- Bootstrap core CSS -->
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-		<!-- Font Awesome CSS -->
-		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-		<!-- Magnific-popup lightbox -->
-		<link href="{%static 'css/magnific-popup.css'%}" rel="stylesheet">
-		<!-- Simple text rotator -->
-		<link href="{%static 'css/simpletextrotator.css'%}" rel="stylesheet">
-		<!-- Animate css -->
-		<link href="{%static 'css/animate.css'%}" rel="stylesheet">
-		<!-- Custom styles CSS -->
-		<link href="{% static 'css/owl.theme.css'%}" rel="stylesheet">
-		<link href="{% static 'css/owl.carousel.css'%}" rel="stylesheet">
-		<link href="{% static 'css/owl.style.css'%}" rel="stylesheet">
-	</head>
-	<body>
-		<!-- Header-->
-		<h1>Hola!</h1>
-		<form method="post" action="app:sign_up">
-			{{form}}
-		</form>
-		<!-- Javascript files -->
-		<!-- jQuery -->
-		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-		<!-- Bootstrap JS -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<!-- Background slider -->
-		<script src="{%static 'js/jquery.backstretch.min.js'%}"></script>
-		<!-- OwlCarousel -->
-		<script src="{%static 'js/owl.carousel.min.js'%}"></script>
-		<!-- Modal for portfolio -->
-		<script src="{%static 'js/jquery.magnific-popup.min.js'%}"></script>
-		<!-- Text rotator -->
-		<script src="{%static 'js/jquery.simple-text-rotator.min.js'%}"></script>
-		<!-- Waypoints -->
-		<script src="{%static 'js/jquery.waypoints.js'%}"></script>
-		<!-- CountTo  -->
-		<script src="{%static 'js/jquery.countTo.js'%}"></script>
-		<!-- WOW - Reveal Animations When You Scroll -->
-		<script src="{%static 'js/wow.min.js'%}"></script>   
-		<!-- Smooth scroll -->
-		<script src="{%static 'js/smoothscroll.js'%}"></script>
-		<!-- Fitvids -->
-		<script src="{%static 'js/jquery.fitvids.js'%}"></script>
-		<!-- Custom scripts -->
-		<script src="{%static 'js/custom.js'%}"></script>
-		<!-- Views Scripts -->
-		<script src="{%static 'js/dynamic.js'%}"></script>
-	</body>
-</html>
+{%load staticfiles%}
+
+	<div class="wrapper">
+
+		<!-- Preloader -->
+
+		<div id="preloader">
+			<div id="status">
+				<div class="status-mes"><h4>OWL Express</h4></div>
+			</div>
+		</div>
+
+		<!-- Navigation start -->
+
+		{% block header %}
+
+			<nav class="navbar navbar-custom navbar-fixed-top navbar-color" role="navigation">
+				<div class="container">
+
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">Owl Express</a>
+					</div>
+
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="#home">Inicio</a></li>
+							<li><a href="#services">Servicios</a></li>
+							<li><a href="#about">Nosotros</a></li>
+							<li><a href="#calculator">Calcule su envio</a></li>
+							<li><a href="#clients">Nuestros Clientes</a></li>
+							<li><a href="#contact">Contactenos</a></li>
+							{% if user.is_authenticated %}
+								<li><a href="{% url 'app:dashboard' %}">Dashboard - {{user.first_name|capfirst}}</a></li>
+								<li><a href="{% url 'app:logout' %}">Salir</a></li>
+							{% endif %}
+						</ul>
+					</div>
+
+				</div>
+			</nav>
+
+		{% endblock %}
+
+		<!-- Navigation end -->
+	
+	{% block content %}
+
+		<!-- Intro section start -->
+
+		<section id="home" class="callout">
+
+			<div class="container">
+
+				<div class="row">
+
+					<div class="col-md-6">
+
+						<div class="hello wow bounceInDown">
+							<h1>Owl Express, entrega rapida y segura</h1>
+							<h3><span class="rotate">Tarifas solidarias. | Servicio automatizado. | La mejor decision. | Planes a tu medida. </span></h3>
+						</div>
+
+						<a href="#profile">
+							<div class="mouse-icon">
+								<div class="wheel"></div>
+							</div>
+						</a>
+
+					</div>
+
+					<div class="col-md-6">
+
+						{% include "authentication.html" %}
+						
+					</div>
+
+				</div><!-- .row -->
+
+			</div><!-- .container -->
+
+		</section>
+
+		<!-- Intro section end -->
+
+		<!-- Services section start -->
+
+		<section id="services" class="section">
+			
+			{% include "services.html" %}
+
+		</section>
+
+		<!-- Services section end -->
+
+		<!-- About section start -->
+
+		<section id="about" class="callout">
+			
+			{% include "about.html" %}
+
+		</section>
+
+		<!-- About section end -->
+
+		<!-- Calculator section start -->
+
+		<section id="calculator" class="section">
+
+			{% include "calculator.html" %}
+
+		</section>
+
+		<!-- Calculator section end -->
+
+		<!-- Clients section start -->
+
+		<section id="clients" class="callout">
+			
+			{% include "clients.html" %}
+
+		</section>
+
+		<!-- Clients section end -->
+
+		<!-- Contact section start -->
+
+		<section id="contact" class="section">
+
+			{% include "contacts.html" %}
+
+		</section>
+
+		<!-- Contact section end -->
+
+	{% endblock %}
+
+</div><!-- .wrapper -->

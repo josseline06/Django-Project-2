@@ -1,0 +1,35 @@
+{%load staticfiles%}
+<div class="container">
+
+	<div class="row">
+
+		<div class="col-md-3 hidden-xs wow bounceInLeft">
+			<h3>Testimonios de nuestros Clientes</h3>
+			<p>Nuestros clientes respaldan nuestro excelente trabajo.</p>
+		</div>
+
+		<div class="col-md-9 wow bounceInRight">
+
+			<div class="cd-testimonials-wrapper cd-container">
+				<ul class="cd-testimonials">
+
+					{%for comment in comments %}
+					<li>
+						<p>{{comment.comment}}</p>
+						<div class="cd-author">
+							<img src="{{comment.user}}" alt="Author image">
+							<ul class="cd-author-info">
+								<li>{{comment.user.get_full_name}}</li>
+								<li>{{comment.date}}</li>
+							</ul>
+						</div>
+					</li>
+					{%endfor%}		
+				</ul> <!-- cd-testimonials -->
+			</div> <!-- cd-testimonials-wrapper -->
+
+		</div><!-- .col-md-9 -->
+
+	</div><!-- .row -->
+
+</div><!-- .container -->

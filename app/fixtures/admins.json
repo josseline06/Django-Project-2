@@ -22,5 +22,17 @@
 			"email": "abel.arce@owlexpress.com",
 			"groups": [1]
 		}
+	},
+	{
+		"model": "app.user",
+		"pk": 3,
+		"fields": {
+			"password": "pbkdf2_sha256$20000$UDLoFM2Pi7Ws$CUfOZMLjojxGloDWBJL3b3x1MUqRVE41KsQpjphYink=",
+			"username": "ybrahin.martinez@owlexpress.com",
+			"first_name": "ybrahin",
+			"last_name": "martinez",
+			"email": "ybrahin.martinez@owlexpress.com",
+			"groups": [2]
+		}
 	}
 ]

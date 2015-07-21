@@ -1,0 +1,132 @@
+<div class="is_visible cd-user-modal"> <!-- this is the entire modal form, including the background -->
+	<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
+		<ul class="cd-switcher">
+			<li><a class="selected" href="#0">Entrar</a></li>
+			<li><a href="#0">Registrarse</a></li>
+		</ul>
+		<div class="is-selected"id="cd-login"> <!-- log in form -->
+			<form class="cd-form-auth" method="post" action={% url 'app:login' %}>{% csrf_token %}
+				<p class="fieldset">
+					<label class="image-replace cd-email" for="signin-email">Correo</label>
+					<input class="full-width has-padding has-border" id="signin-email" type="email" placeholder="Correo" name="username" required>
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signin-password">Contraseña</label>
+					<input class="full-width has-padding has-border" id="signin-password" type="password"  placeholder="Password" required name="password">
+				</p>
+
+				<p class="fieldset">
+					<input class="full-width" type="submit" value="Entrar">
+				</p>
+			</form>
+			
+			<p class="cd-form-bottom-message"><a href="#0">¿Perdiste tu contraseña?</a></p>
+		</div> <!-- cd-login -->
+
+		<div id="cd-signup"> <!-- sign up form -->
+			<form class="cd-form-auth" method="post" action={% url 'app:sign_up' %}>{% csrf_token %}
+
+				<div class="selected" id="first">
+					<!--Nombre-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-name">Nombre</label>
+						<input class="full-width has-padding has-border" id="signup-name" type="text" placeholder="Nombre" name ="name" required>
+					</p>
+
+					<!--Apellido-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-lastname">Apellido</label>
+						<input class="full-width has-padding has-border" id="signup-lastname" type="text" placeholder="Apellido" name ="last_name" required>
+					</p>
+
+					<!--Correo-->
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="signup-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="signup-email" type="email" placeholder="Correo" name="email" required>
+					</p>
+
+					<!--Contraseña-->
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signup-password">Password</label>
+						<input class="full-width has-padding has-border" id="signup-password" type="password"  placeholder="Password" name ="password"required>
+					</p>
+
+					<p class="fieldset">
+						<button id="btn_next_signin" class="full-width has-border">Siguiente</button>
+					</p>
+					
+
+				</div>
+
+				<div id="second">
+					<!--País-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-country">País</label>
+						<input class="full-width has-padding has-border" id="signup-country" type="text"  placeholder="País" name ="country"required>
+					</p>
+
+					<!--Ciudad-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-city">Ciudad</label>
+						<input class="full-width has-padding has-border" id="signup-city" type="text"  placeholder="Ciudad" name ="city" required>
+					</p>
+
+					<!--Direccion-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-address">Dirección</label>
+						<input class="full-width has-padding has-border" id="signup-address" type="text"  placeholder="Dirección" name ="address"required>
+					</p>
+					
+					<!--Codigo Postal-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-zip">Código Postal</label>
+						<input class="full-width has-padding has-border" id="signup-zip" type="text"  placeholder="Código Postal" name ="postal_code"required>
+					</p>
+
+					<!--Telefono-->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-phone">Teléfono</label>
+						<input class="field-tel full-width has-padding has-border" id="signup-phone" type="tel"  placeholder="Telefóno" name ="phone"required>
+					</p>
+					
+					<p class="fieldset">
+						<input type="checkbox" id="accept-terms" required>
+						<label for="accept-terms">Acepto los  <a href="#0">Terminos</a></label>
+					</p>
+					
+					<p class="fieldset">
+						<button id="btn_last_signin" class="full-width has-border">Anterior</button>
+					</p>
+						<input type="text" style="display:none"name="avatar"></input>
+					<p class="fieldset">
+						<input class="full-width has-padding" type="submit" value="Registrarse">
+					</p>
+
+				</div>
+
+			</form>
+
+			<!-- <a href="#0" class="cd-close-form">Close</a> -->
+		</div> <!-- cd-signup -->
+
+		<div id="cd-reset-password">Reiniciar Contraseña
+			<p class="cd-form-message">¿Perdiste tu contraseña? Por favor introduzca su correo. Recibirá una nueva contraseña pronto.</p>
+
+			<form class="cd-form">
+				<p class="fieldset">
+					<label class="image-replace cd-email" for="reset-email">Correo</label>
+					<input class="full-width has-padding has-border" id="reset-email" type="email" placeholder="E-mail">
+					<span class="cd-error-message">{{error.message}}</span>
+				</p>
+
+				<p class="fieldset">
+					<input class="full-width has-padding" type="submit" value="Reiniciar Contraseña">
+				</p>
+			</form>
+
+			<p class="cd-form-bottom-message"><a href="#0">Volver al Login</a></p>
+		</div> <!--cd-reset-password -->
+		<a href="#0" class="cd-close-form">Cerrar</a>
+	</div>
+</div>

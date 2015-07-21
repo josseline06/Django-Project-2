@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Dashboard
+{% endblock %}
+
+{% block header %}
+
+    <nav class="navbar navbar-custom navbar-fixed-top navbar-color" role="navigation">
+        <div class="container">
+
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'app:index'%}">{{user.get_gull_name}}</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{%url 'app:index'%}">Principal</a></li>
+                    <li><a href="{%url 'app:dashboard'%}">Resumen</a></li>
+                    <li><a href="{%url 'app:profile' %}">Perfil</a></li>
+                    <li><a href="{%url 'app:shipment' %}">Paquetes</a></li>
+                    <li><a href="{%url 'app:history' %}">Historial de Envíos</a></li>
+                    <li><a href="{%url 'app:dashboard' %}">Modificar Agencia</a></li>
+                    <li><a href="{%url 'app:dashboard' %}">Modificar Sistema</a></li>
+                    <li><a href="{% url 'app:logout' %}">Salir</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block content%}
+
+    <section class="section">
+        <div class="container-fluid">
+
+            {% block heading_page %}
+
+            {% endblock %}
+
+            {% block content_page %}
+
+            {% endblock %}
+                    
+        </div>   
+    </section>
+
+{% endblock %}

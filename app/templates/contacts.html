@@ -1,0 +1,52 @@
+<div class="container">
+
+	<div class="row">
+
+		<div class="col-md-12 headline wow bounceInLeft">
+			<h2>Contactenos</h2>
+			<p>Estamos para ayudarte en cualquier duda e inconveniente que poseas.</p>
+		</div>
+
+		<div class="col-md-8 wow bounceInUp">
+
+			<p>Contactanos por cualquiera de estos medios, o escribenos a nuestro correo o a través del formulario siguiente, en cualquier momento un experto de Owl Express te atenderá.</p>
+
+			<ul class="icon-list">
+				<li><i class="fa fa-fw fa-map-marker"></i>001 Universidad Central de Venezuela, Caracas, VE</li>
+				<li><i class="fa fa-fw fa-phone"></i>(+58)212-1234567</li>
+				<li><i class="fa fa-fw fa-envelope-o"></i><a href="mailto:">soporte@owlexpress.com</a></li>
+			</ul>
+
+		</div>
+
+		<div class="col-md-4 wow bounceInRight">
+
+			<form id="contact-form" method="post" action="{%url 'app:contacts' %}">{% csrf_token %}
+
+				<div class="form-group">
+					<label class="sr-only" for="c_name">Nombre</label>
+					<input type="text" id="c_name" class="form-control" name="c_name" placeholder="Nombre" required>
+				</div>
+
+				<div class="form-group">
+					<label class="sr-only" for="c_email">Correo</label>
+					<input type="email" id="c_email" class="form-control" name="c_email" placeholder="Correo"required>
+				</div>
+
+				<div class="form-group">
+					<textarea class="form-control" id="c_message" name="c_message" rows="7" placeholder="Tu mensaje"></textarea>
+				</div>
+
+				<button type="submit" class="btn btn-custom-1">
+					<i class="fa fa-paper-plane-o"></i> Enviar
+				</button>
+
+			</form>
+
+			<div class="ajax-response"></div>
+
+		</div>
+
+	</div><!-- .row -->
+
+</div><!-- .container -->

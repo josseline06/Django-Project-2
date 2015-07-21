@@ -1,0 +1,24 @@
+[
+	{
+		"model": "app.location",
+		"pk": 1,
+		"fields": {
+			"address": "Av. Los Ilustres, Cuadra Nro. 5, Local 3-3",
+			"postal_code": "1010",
+			"city": "Caracas",
+			"country": "Venezuela"
+		}
+	},
+	{	
+		"model": "app.agency",
+		"pk": "valle_abajo",
+		"fields": {
+			"name": "Valle Abajo",
+			"manager": 3,
+			"location": 1,
+			"date_joined":"2015-07-19 10:40:44.649695-04:30",
+			"is_active":true,
+			"phone":"+582121234567"
+		}
+	}
+]

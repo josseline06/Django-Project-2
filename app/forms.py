@@ -72,7 +72,7 @@ class ShipmentForm(forms.Form):
 
 # Paquete
 class PackageForm(forms.Form):
-	shipment = forms.ChoiceField(choices=Shipments.objects.all())
+	shipment = forms.ChoiceField(choices=Shipment.objects.all())
 	weight = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
 	width = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)
 	height = forms.DecimalField(min_value=0.01, max_digits=8, decimal_places=2)

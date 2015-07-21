@@ -1,22 +1,29 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic.base import View, TemplateView
 from django.contrib.auth.decorators import permission_required, login_required
+from django.core import serializers
 from django.contrib.auth.models import Group
 from django.shortcuts import render
 from .models import *
 from .forms import *
-import .utils # helpers personalizados
+from .utils import *
+import json
+
 
 # Pagina principal
 class Index(View):
 	template_name = 'index.html'
-	form = EmployeeForm()
-
 	def get(self, request):
-		return render(request, self.template_name, {"form": self.form})
+		active_rates = Rate.objects.filter(is_active=True) #Retornando todos los planes de tarifas activos
+		
+		if active_rates.count() > 0:
+			active_rates.description = create_array(active_rates.description)
+
+		comments = Comment.objects.all() #Retornando los comentarios hechos por los usuarios
+		return render(request, self.template_name)
 
 # Calculadora de precios
-class Calculator(View):
+class CalculatorView(View):
 	def post(self, request, rate):
 		try:
 			selected_rate = Rate.objects.get(key_name=rate)
@@ -31,27 +38,48 @@ class Calculator(View):
 		total = utils.package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
 		return JsonResponse({"response": total})
 
-# Registro de clientes
-class SignUp(View):
+
+class ProfileView(View):
+	template_name  = 'profile.html'
+
+	def get(self, request):
+		try:
+			profile_user = Profile.objects.get(user=request.user)
+			#user = EmployeeProfile.objects.get(profile=profile) VERIFICAR BIEN ESTE PEO RECUERDATE YBRAHIN
+		except (Profile.DoesNotExist) as e: #ESTA MIERDA SIGUE DANDO PEOS
+			return JsonResponse({"response": "Error"})
+
+		return render(request, self.template_name,{"profile":profile_user})
+		
+	# Registro de clientes
 	def post(self, request):
 		sign_up	= SignUpForm(request.POST, request.FILES)
 		
-		profile = utils.create_user(sign_up,request.POST['avatar'])
-		if not profile:
-			if utils.state == utils.states.form_no_valid:
-				return JsonResponse({"response": "Error"})
-			if utils.state == utils.states.email_exists:	
-				return JsonResponse({"response": "This email already exists"})
-		
+		response = json.loads(create_user(sign_up,request.POST['avatar']))
+		if response['profile'] is None:
+			return JsonResponse({"response": response['message']})
+		print 'aqui jodo todo'
+		profile = serializers.deserialize("json", response['profile']).next().object
+
 		# Asignando grupo:
 		group = Group.objects.get(name='clients')
 		profile.user.groups.add(group)
+		template_name = 'index.html'
+		send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data) #Enviando correo
 
-		return JsonResponse({"response": "Yeah"})
+		return HttpResponseRedirect('/')
+
+
+	def put(self,request):
+		print "actualizar cuenta"
+
+	@permission_required('app.change_employeeprofile')
+	def delete(self,request):
+		print "deshabilitar cuenta"
 
 # Registro de empleados
 @login_required
-class Employee(View):
+class EmployeeView(View):
 	@permission_required('app.add_employeeprofile')
 	def post(self, request):
 		new_employee = EmployeeForm(request.POST, request.FILES)
@@ -73,7 +101,7 @@ class Employee(View):
 
 # Registro de administradores
 @login_required
-class Admin(View):
+class AdminView(View):
 	@permission_required('app.add_agency')
 	def post(self, request):
 		new_admin = AdminForm(request.POST, request.FILES)
@@ -100,7 +128,7 @@ class Admin(View):
 
 # Registro de agencias
 @login_required
-class Agency(View):
+class AgencyView(View):
 	@permission_required('app.add_agency')
 	def post(self, request):
 		new_agency = AgencyForm(request.POST, request.FILES)
@@ -127,7 +155,7 @@ class Agency(View):
 
 # Registro de tarifas
 @login_required
-class Rate(View):
+class RateView(View):
 	@permission_required('app.add_rate')
 	def post(self, request):
 		new_rate = RateForm(request.POST, request.FILES)
@@ -151,9 +179,14 @@ class Rate(View):
 		return JsonResponse({"response": "An rate already exists with this name"})
 
 # Registro de envio:
-@login_required
-class Shipment(View):
-	@permission_required('app.add_shipment')
+#@login_required
+class ShipmentView(View):
+
+	template_name = 'shipments.html'
+	def get(self, request):
+		return render(request, self.template_name)
+
+	#@permission_required('app.add_shipment')
 	def post(self, request):
 		new_shipment = ShipmentForm(request.POST, request.FILES)
 
@@ -177,7 +210,7 @@ class Shipment(View):
 
 # Registro de paquetes asociados a un envio:
 @login_required
-class Package(View):
+class PackageView(View):
 	@permission_required('app.add_shipment')
 	def post(self, request):
 		new_package = PackageForm(request.POST, request.FILES)
@@ -194,7 +227,7 @@ class Package(View):
 
 # Crear un comentario
 @login_required
-class Comment(View):
+class CommentView(View):
 	@permission_required('app.add_comment')
 	def post(self, request):
 		new_comment = CommentForm(request.POST, request.FILES)
@@ -207,3 +240,39 @@ class Comment(View):
 		comment.save()
 
 		return JsonResponse({"response": "ok"})
+		
+#Dashboard
+#@login_required(login_url='app:login')
+class DashboardView(View):
+	template_name = 'dashboard.html'
+
+	def get(self, request):
+
+		try:
+			profile_user = Profile.objects.get(user=request.user)
+			#user = EmployeeProfile.objects.get(profile=profile) VERIFICAR BIEN ESTE PEO RECUERDATE YBRAHIN
+		except (Profile.DoesNotExist) as e: #ESTA MIERDA SIGUE DANDO PEOS
+			return JsonResponse({"response": "Error"})
+
+		if request.user.is_employee():
+			try:
+				profile_user_employee = EmployeeProfile.get(profile = profile_user)
+			except (EmployeeProfile.DoesNotExist) as e:
+				return JsonResponse({"response": "Error"})
+
+		if request.user.is_manager:
+			try:
+				agency_managment = Agency.get(manager=request.user)
+			except (Agency.DoesNotExist) as e:
+				return JsonResponse({"response": "Error"})
+
+			employees_agency = 	EmployeeProfile.objects.filter(agency=agency_managment, is_active=True) #Empleados de una agencia
+			shipments_recive = Shipment.objects.filter(agency = agency_managment)
+		return render(request, self.template_name)
+		#return JsonResponse({"response": "Yeah"})
+
+
+class ContactView(View):
+	def post(self,request):
+		
+		return JsonResponse({"response":"Yeah"})

@@ -1,40 +1,92 @@
-<div id="content">
-          <div class="col-md-4 col-sm-3 hidden-xs wow bounceInLeft">
-                        
-                    </div><!-- .col-md-3 -->
-                    
+{% extends "portal_base.html" %}
 
-                    <div class="col-md-4 col-sm-6 wow bounceInRight">
-                        
-                        <div class="wrapper">
-                            <h4>Puede modificar sus datos si lo desea</h4>
-                        	<form class="form-signin center-block">
-                        		  <p>Email</p>
-	                              <input type="text" class="form-control input-sm" name="username" placeholder="email@gmail.com" autofocus="" />
-	                              <br/>
-	                              <p>Contraseña</p>
-	                              <input type="password" class="form-control input-sm" name="password"/>
-	                              <br/>
-	                              <p>Repita su Contraseña</p>
-	                              <input type="password" class="form-control input-sm" name="password"/>
-	                              <br/>
-	                              <p>Pregunta secreta</p>
-	                              <input type="text" class="form-control input-sm" name="Question" placeholder="nombre de mi madre"/>    
-	                              <br/>
-	                              <p>Respuesta</p>
-	                              <input type="text" class="form-control input-sm" name="Question" placeholder="Maria"/>
-	                              <br/>
+{% block heading_page %}
 
-	                              <button class="btn btn-sm btn-danger" type="button" onclick = "getView('save')">Guardar</button>
-	                              <br/>
-                              
-                        	</form> 
-                          </div>
+<div class="row">
+
+    <div class="col-lg-12">
+        <h2 class="page-header">
+            Perfil
+        </h2>
+        <ol class="breadcrumb">
+            <li class="active">
+                <i class="fa fa-user"></i> Perfil
+            </li>
+        </ol>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block content_page %}
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 ">
+        <div class="col-lg-8">
+            <form class="cd-form-auth" method="post">{% csrf_token %}
+
+                <!--Cosas que no se puede actualizar-->
+                <!--Nombre-->
+                <p class="fieldset">
+                    <label class="image-replace cd-email" for="update-name">Nombre</label>
+                    <input class="full-width has-padding has-border" id="update-name" type="text" value="{{user.first_name|capfirst}}">
+                </p>
+
+                <!--Apellido-->
+                <p class="fieldset">
+                    <label class="image-replace cd-email" for="update-last_name">Apellido</label>
+                    <input class="full-width has-padding has-border" id="update-last_name" type="text" value="{{user.last_name|capfirst}}">
+                </p>
+
+                <!--Correo-->
+                <p class="fieldset">
+                    <label class="image-replace cd-email" for="update-email">Correo</label>
+                    <input class="full-width has-padding has-border" id="update-email" type="email" value="{{user.username}}">
+                </p>
+
+                <!--Cosas que se puede actualizar-->
+                <!--País-->
+                <p class="fieldset">
+                    <label class="image-replace cd-username" for="update-country">País</label>
+                    <input class="full-width has-padding has-border" id="update-country" type="text"  value="{{profile.location.country|capfirst}}" name ="country"required>
+                </p>
+
+                <!--Ciudad-->
+                <p class="fieldset">
+                    <label class="image-replace cd-username" for="update-city">Ciudad</label>
+                    <input class="full-width has-padding has-border" id="update-city" type="text"  value="{{profile.location.city|capfirst}}" name ="city" required>
+                </p>
+
+                <!--Direccion-->
+                <p class="fieldset">
+                    <label class="image-replace cd-username" for="update-address">Dirección</label>
+                    <input class="full-width has-padding has-border" id="update-address" type="text"  value="{{profile.location.address}}" name ="address"required>
+                </p>
+                
+                <!--Codigo Postal-->
+                <p class="fieldset">
+                    <label class="image-replace cd-username" for="update-zip">Código Postal</label>
+                    <input class="full-width has-padding has-border" id="update-zip" type="text"  value="{{profile.location.postal_code}}" name ="postal_code"required>
+                </p>
+
+                <!--Telefono-->
+                <p class="fieldset">
+                    <label class="image-replace cd-username" for="update-phone">Teléfono</label>
+                    <input class="field-tel full-width has-padding has-border" id="update-phone" type="tel"  value="{{profile.phone}}" name ="phone"required>
+                </p>
+            </form>
+        </div>
+        <div class="col-log-2">
+
+            {%if profile.avatar == '' %}
+                <img src="{{profile.social_avatar}}">
+            {% else %}
+                <img src="{{profile.avatar}}">
+            {% endif %}
+        </div>
+    </div> 
+</div>
 
 
-                    </div>
-
-                    <div class="col-md-4 col-sm-3 wow bounceInUp center-block">
-                        
-                    </div><!-- .col-md-3 -->
-                </div>
+{% endblock %}

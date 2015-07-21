@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}
+	OWL Express
+{% endblock %}
+
+{% block content%}
+		<h1>Hola!</h1>
+		<form method="post" action="app:sign_up">
+			{{form.as_p}}
+		</form>
+{% endblock %}

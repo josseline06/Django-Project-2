@@ -44,9 +44,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Agency',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('key_name', models.CharField(max_length=60, serialize=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=60)),
                 ('phone', phonenumber_field.modelfields.PhoneNumberField(max_length=128)),
                 ('is_active', models.BooleanField(default=True)),
+                ('date_joined', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
@@ -95,14 +97,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Rate',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=30)),
-                ('key_name', models.CharField(unique=True, max_length=15)),
+                ('key_name', models.CharField(max_length=60, serialize=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=60)),
                 ('value', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('percent', models.DecimalField(max_digits=5, decimal_places=2)),
                 ('date', models.DateTimeField(auto_now_add=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('description', models.CharField(max_length=1000, null=True)),
+                ('description', models.CharField(max_length=1000)),
+                ('date_joined', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
@@ -112,10 +114,6 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=1000, null=True)),
                 ('agency', models.ForeignKey(related_name='agency_fk', to='app.Agency')),
                 ('checker', models.ForeignKey(related_name='checker_fk', to=settings.AUTH_USER_MODEL)),
-                ('location', models.OneToOneField(related_name='shipment_location_fk', to='app.Location')),
-                ('rate', models.ForeignKey(related_name='rate_fk', to='app.Rate')),
-                ('receiver', models.ForeignKey(related_name='receiver_fk', to=settings.AUTH_USER_MODEL)),
-                ('sender', models.ForeignKey(related_name='sender_fk', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -124,6 +122,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('status', models.CharField(default=b'created', max_length=9, choices=[(b'created', b'Created'), (b'dispached', b'Dispatched'), (b'received', b'Received'), (b'committed', b'Commited')])),
                 ('date', models.DateTimeField(auto_now_add=True)),
+                ('shipment', models.ForeignKey(related_name='status_shipment_fk', to='app.Shipment')),
             ],
         ),
         migrations.CreateModel(
@@ -132,14 +131,36 @@ class Migration(migrations.Migration):
                 ('profile', models.OneToOneField(related_name='employee_profile_fk', primary_key=True, serialize=False, to='app.Profile')),
             ],
         ),
+        migrations.CreateModel(
+            name='ProfileLocation',
+            fields=[
+                ('location_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='app.Location')),
+            ],
+            bases=('app.location',),
+        ),
+        migrations.AddField(
+            model_name='shipment',
+            name='destination',
+            field=models.OneToOneField(related_name='shipment_destination_fk', to='app.Location'),
+        ),
+        migrations.AddField(
+            model_name='shipment',
+            name='rate',
+            field=models.ForeignKey(related_name='rate_fk', to='app.Rate'),
+        ),
+        migrations.AddField(
+            model_name='shipment',
+            name='receiver',
+            field=models.ForeignKey(related_name='receiver_fk', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='shipment',
+            name='sender',
+            field=models.ForeignKey(related_name='sender_fk', to=settings.AUTH_USER_MODEL),
+        ),
         migrations.AlterUniqueTogether(
             name='rate',
             unique_together=set([('value', 'percent')]),
-        ),
-        migrations.AddField(
-            model_name='profile',
-            name='location',
-            field=models.OneToOneField(related_name='user_location_fk', to='app.Location'),
         ),
         migrations.AddField(
             model_name='profile',
@@ -151,15 +172,24 @@ class Migration(migrations.Migration):
             name='shipment',
             field=models.ForeignKey(related_name='shipment_fk', to='app.Shipment'),
         ),
+        migrations.AlterUniqueTogether(
+            name='location',
+            unique_together=set([('address', 'postal_code', 'city', 'country')]),
+        ),
         migrations.AddField(
             model_name='agency',
             name='location',
-            field=models.OneToOneField(related_name='agency_location_fk', to='app.Location'),
+            field=models.ForeignKey(related_name='agency_location_fk', to='app.Location'),
         ),
         migrations.AddField(
             model_name='agency',
             name='manager',
             field=models.OneToOneField(related_name='manager_fk', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='profilelocation',
+            name='location',
+            field=models.ForeignKey(related_name='profile_location_fk', to='app.Profile'),
         ),
         migrations.AddField(
             model_name='employeeprofile',
