@@ -1,8 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from phonenumber_field import modelfields as phonemodel
-
+from .utils import upload_avatar, OverwriteStorage
+ 
 class User(AbstractUser):
+	def is_employee(self):
+		return self.has_perm('app.add_shipment')
+
+	def is_admin(self):
+		return self.has_perm('app.add_agency')
+
+	def is_manager(self):
+		return self.has_perm('app.add_employeeprofile')
+
+	def is_client(self):
+		return not(self.is_manager() and self.is_admin() and self.is_employee())
+
 	class Meta:
 		verbose_name = 'user'
 		verbose_name_plural = 'users'
@@ -33,7 +46,7 @@ class Profile(models.Model):
 	location = models.ForeignKey(Location, related_name='profile_location_fk')
 	phone = phonemodel.PhoneNumberField()
 	social_avatar = models.URLField()
-	avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+	avatar = models.ImageField(upload_to=upload_avatar, storage=OverwriteStorage(), null=True, blank=True)
 	last_edit = models.DateTimeField(auto_now_add=True)
 	#Aplica solo para administradores:
 	is_manager = models.BooleanField(default=False)

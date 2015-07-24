@@ -3,6 +3,9 @@ from app.models import User, Location, Profile
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
 import json
 
 # Genera un nombre clave 
@@ -19,8 +22,6 @@ def send_email(destination,subject,variables,template):
 	msg = EmailMessage(subject, content, from_email, [to])
 	msg.send()
 
-	#send_mail('Prueba de correo #1', 'Esto es un correo desde mi servidor yupi', 'OWL Express <mail@owlexpress.me>', [destinations], fail_silently=False)
-
 # Calcula el costo de un paquete 
 def package_cost(rate, width, height, depth, weight, price):
 	return (width*height*depth*weight)/rate.value + (rate.percent*price)/100
@@ -32,29 +33,47 @@ def create_location(address, postal_code, city, country):
 		location = Location.objects.get(address=address, postal_code=postal_code, city=city, country=country)
 		print location
 	except Location.DoesNotExist:
-		print 'llegom a esta puta mierda'
 		location = Location(address=address, postal_code=postal_code, city=city, country=country)
 		location.save()
 	return location
 
+# Sube un avatar
+def upload_avatar(instance, filename):
+	os.rename(filename, gravatar.calculate_gravatar_hash(instance.email))
+	return os.path.join("avatars", filename)
+
+# Verifica si avatar es proveniente de gravatar
+def gravatar_avatar(instance):
+	return instance.social_avatar == gravatar.get_gravatar_url(email=instance.email, default='identicon')
+
+def create_gravatar(email):
+	return gravatar.get_gravatar_url(email=email, default='identicon')
+	
+# Guarda un avatar
+class OverwriteStorage(FileSystemStorage):
+	def get_available_name(self, name):
+		if self.exists(name):
+			os.remove(os.path.join(settings.MEDIA_ROOT, name))
+		return name
+
 # Crea el perfil basico de un usuario:
 def create_user(form, avatar):
 	if not form.is_valid():
-		return json.dumps({'profile': None, 'message':' Form is not valid'})
-		
+		return json.dumps({'profile': None, 'message':' Form is not valid, try again.'})
+	data = form.cleaned_data
 	try:
-		user = User.objects.get(email=form.cleaned_data['email'])
+		user = User.objects.get(email=data['email'])
 	except User.DoesNotExist:
 		if not avatar:
-			avatar = gravatar.get_gravatar_url(email=form.cleaned_data['email'], default='identicon')
+			avatar = create_gravatar(data['email'])
 		#Creando usuario:
-		user = User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['email'], form.cleaned_data['password'])
-		user.first_name = form.cleaned_data['name']
-		user.last_name = form.cleaned_data['last_name']
+		user = User.objects.create_user(data['email'], data['email'], data['password'])
+		user.first_name = data['name']
+		user.last_name = data['last_name']
 		user.save()
-		location = create_location(form.cleaned_data['address'], form.cleaned_data['postal_code'], form.cleaned_data['city'], form.cleaned_data['country'])
-		profile = Profile(user=user, location=location, phone=form.cleaned_data['phone'], social_avatar=avatar)
+		location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
+		profile = Profile(user=user, location=location, phone=data['phone'], social_avatar=avatar)
 		profile.save()
 		print profile
-		return json.dumps({'profile': serializers.serialize('json', [ profile, ]), 'message': 'OK'})
-	return json.dumps({'profile': None, 'message': 'This email already exists'})
+		return json.dumps({'profile': serializers.serialize('json', [ profile, ]), 'message': 'OK.'})
+	return json.dumps({'profile': None, 'message': 'This email already exists, try again.'})

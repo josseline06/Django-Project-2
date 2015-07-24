@@ -25,8 +25,6 @@ class AdminForm(SignUpForm):
 # Perfil
 class ProfileForm(forms.Form):
 	avatar = forms.ImageField(required=False)
-	name = forms.CharField(min_length=3, max_length=30)
-	last_name = forms.CharField(min_length=2, max_length=30)
 	email = forms.EmailField()
 	country = forms.CharField(min_length=3, max_length=30)
 	city = forms.CharField(min_length=3, max_length=30)

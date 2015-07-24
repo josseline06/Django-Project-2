@@ -9,18 +9,23 @@ from .forms import *
 from .utils import *
 import json
 
-
-# Pagina principal
+# Pagina principal -- FALTA
 class Index(View):
 	template_name = 'index.html'
 	def get(self, request):
-		active_rates = Rate.objects.filter(is_active=True) #Retornando todos los planes de tarifas activos
+		# Retornando todos los planes de tarifas activos
+		active_rates = Rate.objects.filter(is_active=True)
 		
 		if active_rates.count() > 0:
 			active_rates.description = create_array(active_rates.description)
-
-		comments = Comment.objects.all() #Retornando los comentarios hechos por los usuarios
+		# Retornando los comentarios hechos por los usuarios
+		comments = Comment.objects.all()
 		return render(request, self.template_name)
+
+
+class Error(TemplateView):
+	template_name = '404.html'
+
 
 # Calculadora de precios
 class CalculatorView(View):
@@ -28,28 +33,37 @@ class CalculatorView(View):
 		try:
 			selected_rate = Rate.objects.get(key_name=rate)
 		except Rate.DoesNotExist:
-			# Redireccionar a vista de 404
-			return JsonResponse({"response": "404 error"})
+			return HttpResponseRedirect('/404')
 		
 		calculator = CalculatorForm(request.POST, request.FILES)
 		if not calculator.is_valid():
-			return JsonResponse({"response": "error in data"})
+			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
 		data = calculator.cleaned_data
-		total = utils.package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
-		return JsonResponse({"response": total})
+		total = package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
+		return JsonResponse({"code": 200, "response": total})
 
 
 class ProfileView(View):
-	template_name  = 'profile.html'
+	template_name = 'index.html'
 
+	# Ver perfil de cliente/empleado/administrador
+	@login_required
 	def get(self, request):
 		try:
-			profile_user = Profile.objects.get(user=request.user)
-			#user = EmployeeProfile.objects.get(profile=profile) VERIFICAR BIEN ESTE PEO RECUERDATE YBRAHIN
-		except (Profile.DoesNotExist) as e: #ESTA MIERDA SIGUE DANDO PEOS
-			return JsonResponse({"response": "Error"})
+			profile = Profile.objects.get(user=request.user)
+			agency = None
 
-		return render(request, self.template_name,{"profile":profile_user})
+			if request.user.is_employee():
+				employee = EmployeeProfile.objects.get(profile=profile)
+				agency = employee.agency
+
+			if request.user.is_manager():
+				agency = Agency.objects.get(manager=request.user)
+
+		except (Profile.DoesNotExist, EmployeeProfile.DoesNotExist, Agency.DoesNotExist) as e:
+			return HttpResponseRedirect('/404')
+
+		return render(request, self.template_name, {"profile": profile, "agency": agency})
 		
 	# Registro de clientes
 	def post(self, request):
@@ -57,25 +71,30 @@ class ProfileView(View):
 		
 		response = json.loads(create_user(sign_up,request.POST['avatar']))
 		if response['profile'] is None:
-			return JsonResponse({"response": response['message']})
-		print 'aqui jodo todo'
+			return JsonResponse({"code": 400, "response": response['message']})
 		profile = serializers.deserialize("json", response['profile']).next().object
 
 		# Asignando grupo:
 		group = Group.objects.get(name='clients')
 		profile.user.groups.add(group)
-		template_name = 'index.html'
+		# MEJORAR 
 		send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data,'welcome') #Enviando correo
 
 		return HttpResponseRedirect('/')
 
+	# Editar perfil de cliente/empleado/administrador
+	@login_required
+	def put(self, request):
+		profile = ProfileForm(request.POST, request.FILES)
 
-	def put(self,request):
-		print "actualizar cuenta"
+		if not profile.is_valid():
+			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
+		
+		last_email = request.user.email
+		data = profile.cleaned_data
 
-	@permission_required('app.change_employeeprofile')
-	def delete(self,request):
-		print "deshabilitar cuenta"
+		return JsonResponse({"code": 400, "response": "This email already exists, try again."})
+
 
 # Registro de empleados
 @login_required
@@ -98,6 +117,7 @@ class EmployeeView(View):
 		profile.user.groups.add(group)
 
 		return JsonResponse({"response": "Yeah"})
+
 
 # Registro de administradores
 @login_required
@@ -126,6 +146,7 @@ class AdminView(View):
 
 		return JsonResponse({"response": "Yeah"})
 
+
 # Registro de agencias
 @login_required
 class AgencyView(View):
@@ -153,6 +174,7 @@ class AgencyView(View):
 		return JsonResponse({"response": "An agency already exists in that name"})
 
 
+
 # Registro de tarifas
 @login_required
 class RateView(View):
@@ -177,6 +199,7 @@ class RateView(View):
 				return JsonResponse({"response": "Yeah"})
 			return JsonResponse({"response": "An rate already exists with those values"})
 		return JsonResponse({"response": "An rate already exists with this name"})
+
 
 # Registro de envio:
 #@login_required
@@ -208,6 +231,7 @@ class ShipmentView(View):
 
 		return JsonResponse({"response": "Yeah"})
 
+
 # Registro de paquetes asociados a un envio:
 @login_required
 class PackageView(View):
@@ -225,6 +249,7 @@ class PackageView(View):
 
 		return JsonResponse({"response": cost})
 
+
 # Crear un comentario
 @login_required
 class CommentView(View):
@@ -240,6 +265,7 @@ class CommentView(View):
 		comment.save()
 
 		return JsonResponse({"response": "ok"})
+
 		
 #Dashboard
 #@login_required(login_url='app:login')

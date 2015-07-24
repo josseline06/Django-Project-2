@@ -32,5 +32,7 @@ urlpatterns = [
     #Contacts
     url(r'^contact/$',views.ContactView.as_view(),name='contacts'),
 
+    # Error 404
+    url(r'^404/$', views.Error.as_view(), name='error'), 
 
 ]
