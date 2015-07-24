@@ -11,8 +11,8 @@ def create_key_name(string):
 	return result.replace(' ', '_')
 
 # Envio de correo
-def send_email(destination,subject,variables):
-	template_name = get_template('email/welcome.text')
+def send_email(destination,subject,variables,template):
+	template_name = get_template('email/'+ template +'.text')
 
 	to, from_email = destination , 'OWL Express <mail@owlexpress.me>'
 	content = template_name.render(variables)

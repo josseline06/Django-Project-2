@@ -65,7 +65,7 @@ class ProfileView(View):
 		group = Group.objects.get(name='clients')
 		profile.user.groups.add(group)
 		template_name = 'index.html'
-		send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data) #Enviando correo
+		send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data,'welcome') #Enviando correo
 
 		return HttpResponseRedirect('/')
 
