@@ -122,21 +122,22 @@ class ProfileView(View):
 		return JsonResponse({"code": 200, "response": "Your profile has been changed successfully."})
 
 
-
-
-# Registro de empleados
 @login_required
 class EmployeeView(View):
+	# Lista de empleados de una agencia
+	def get(self, request):
+		print "llego :D"
+
+	# Registro de empleados
 	@permission_required('app.add_employeeprofile')
 	def post(self, request):
 		new_employee = EmployeeForm(request.POST, request.FILES)
 		
-		profile = utils.create_user(new_employee,request.POST['avatar'])
-		if not profile:
-			if utils.state == utils.states.form_no_valid:
-				return JsonResponse({"response": "Error"})
-			if utils.state == utils.states.email_exists:	
-				return JsonResponse({"response": "This email already exists"})
+		response = json.loads(create_user(new_employee, request.POST['avatar']))
+		if response['profile'] is None:
+			return JsonResponse({"code": 400, "response": response['message']})
+		profile = serializers.deserialize("json", response['profile']).next().object
+
 		# Agregando agencia:
 		employee = EmployeeProfile(profile=profile, agency=new_employee.cleaned_data['agency'])
 		employee.save()
@@ -144,22 +145,25 @@ class EmployeeView(View):
 		group = Group.objects.get(name='employees')
 		profile.user.groups.add(group)
 
-		return JsonResponse({"response": "Yeah"})
+		# Enviar correo a gerente y a empleado
+
+		return JsonResponse({"code": 200, "response": "The employee has created successfully."})
 
 
-# Registro de administradores
+
 @login_required
 class AdminView(View):
+
+	# Registro de administradores
 	@permission_required('app.add_agency')
 	def post(self, request):
 		new_admin = AdminForm(request.POST, request.FILES)
 		
-		profile = utils.create_user(new_admin,request.POST['avatar'])
-		if not profile:
-			if utils.state == utils.states.form_no_valid:
-				return JsonResponse({"response": "Error"})
-			if utils.state == utils.states.email_exists:	
-				return JsonResponse({"response": "This email already exists"})
+		response = json.loads(create_user(new_admin, request.POST['avatar']))
+		if response['profile'] is None:
+			return JsonResponse({"code": 400, "response": response['message']})
+		profile = serializers.deserialize("json", response['profile']).next().object
+
 		# Verificando si es gerente de agencia:
 		if new_admin.cleaned_data['is_manager']:
 			profile.is_manager = True
@@ -172,22 +176,26 @@ class AdminView(View):
 		group = Group.objects.get(name=group_name)
 		profile.user.groups.add(group)
 
-		return JsonResponse({"response": "Yeah"})
+		# Enviar correo a nuevo admin y a admin
+
+		return JsonResponse({"code": 200, "response": "The admin has created successfully."})
 
 
-# Registro de agencias
+
 @login_required
 class AgencyView(View):
+
+	# Registro de agencias
 	@permission_required('app.add_agency')
 	def post(self, request):
 		new_agency = AgencyForm(request.POST, request.FILES)
 
 		if not new_agency.is_valid():
-			return JsonResponse({"response": "Error"})
+			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
 
 		# Agregando nueva agencia:
 		data = new_agency.cleaned_data
-		key_name = utils.create_key_name(data['name'])
+		key_name = create_key_name(data['name'])
 		try:
 			agency = Agency.objects.get(key_name=key_name)
 		except Agency.DoesNotExist:

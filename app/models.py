@@ -1,7 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group
 from phonenumber_field import modelfields as phonemodel
-from .utils import upload_avatar, OverwriteStorage
+from .utils import upload_avatar
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
+
+# Almacenar imagenes en Profile:
+class OverwriteStorage(FileSystemStorage):
+	def get_available_name(self, name):
+		if self.exists(name):
+			os.remove(os.path.join(settings.MEDIA_ROOT, name))
+		return name
  
 class User(AbstractUser):
 	def is_employee(self):

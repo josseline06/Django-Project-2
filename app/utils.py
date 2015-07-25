@@ -3,8 +3,6 @@ from app.models import User, Location, Profile
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.core import serializers
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
 import os
 import json
 
@@ -58,17 +56,10 @@ def gravatar_avatar(instance):
 def create_gravatar(email):
 	return gravatar.get_gravatar_url(email=email, default='identicon')
 	
-# Guarda un avatar:
-class OverwriteStorage(FileSystemStorage):
-	def get_available_name(self, name):
-		if self.exists(name):
-			os.remove(os.path.join(settings.MEDIA_ROOT, name))
-		return name
-
 # Crea el perfil basico de un usuario:
 def create_user(form, avatar):
 	if not form.is_valid():
-		return json.dumps({'profile': None, 'message':' Form is not valid, try again.'})
+		return json.dumps({'profile': None, 'message':'Some of the data is invalid, try again.'})
 	data = form.cleaned_data
 	try:
 		user = User.objects.get(email=data['email'])
@@ -83,6 +74,5 @@ def create_user(form, avatar):
 		location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
 		profile = Profile(user=user, location=location, phone=data['phone'], social_avatar=avatar)
 		profile.save()
-		print profile
 		return json.dumps({'profile': serializers.serialize('json', [ profile, ]), 'message': 'OK.'})
 	return json.dumps({'profile': None, 'message': 'This email already exists, try again.'})
