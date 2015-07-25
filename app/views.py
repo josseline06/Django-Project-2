@@ -118,19 +118,9 @@ class ProfileView(View):
 			change = True
 			request.user.avatar = avatar
 
-		# Si cambia el telefono
-		if request.user.phone != data['phone']:
-			change = True
-			request.user.phone = data['phone']
-
-		# Si cambia algun campo de locacion
-		if not check_location(request.user, data['address'], data['postal_code'], data['city'], data['country']):
-			change = True
-			request.user.location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
-
-		# Guardando cambios
-		if change:
-			request.user.save()
+		request.user.phone = data['phone']
+		request.user.location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
+		request.user.save()
 
 		return JsonResponse({"code": 200, "response": "Your profile has been changed successfully."})
 
