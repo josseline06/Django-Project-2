@@ -31,25 +31,34 @@ def package_cost(rate, width, height, depth, weight, price):
 def create_location(address, postal_code, city, country):
 	try:
 		location = Location.objects.get(address=address, postal_code=postal_code, city=city, country=country)
-		print location
 	except Location.DoesNotExist:
 		location = Location(address=address, postal_code=postal_code, city=city, country=country)
 		location.save()
 	return location
 
-# Sube un avatar
+# Verifica si la locacion dada es la del usuario:
+def check_location(instance, address, postal_code, city, country):
+	try:
+		location = Location.objects.get(address=address, postal_code=postal_code, city=city, country=country)
+	except Location.DoesNotExist:
+		return False
+
+	return instance.location == location
+
+# Retorna ruta de archivo de avatar:
 def upload_avatar(instance, filename):
 	os.rename(filename, gravatar.calculate_gravatar_hash(instance.email))
 	return os.path.join("avatars", filename)
 
-# Verifica si avatar es proveniente de gravatar
+# Verifica si avatar es proveniente de gravatar:
 def gravatar_avatar(instance):
 	return instance.social_avatar == gravatar.get_gravatar_url(email=instance.email, default='identicon')
 
+# Crea una url para un avatar en gravatar:
 def create_gravatar(email):
 	return gravatar.get_gravatar_url(email=email, default='identicon')
 	
-# Guarda un avatar
+# Guarda un avatar:
 class OverwriteStorage(FileSystemStorage):
 	def get_available_name(self, name):
 		if self.exists(name):

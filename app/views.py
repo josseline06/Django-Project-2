@@ -23,6 +23,7 @@ class Index(View):
 		return render(request, self.template_name)
 
 
+# Error 404 
 class Error(TemplateView):
 	template_name = '404.html'
 
@@ -90,10 +91,50 @@ class ProfileView(View):
 		if not profile.is_valid():
 			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
 		
-		last_email = request.user.email
 		data = profile.cleaned_data
+		avatar = None
+		change  = False
 
-		return JsonResponse({"code": 400, "response": "This email already exists, try again."})
+		# Si edita correo:
+		if request.user.email != data['email']:
+			try:
+				user = User.objects.get(email=data['email'])
+				return JsonResponse({"code": 400, "response": "This email already exists, try again."})
+			except User.DoesNotExist:
+				change = True
+				request.user.email = data['email']
+				# Deberia mandar un correo de que se cambio
+				if request.user.avatar:
+					avatar = request.user.avatar
+				elif gravatar_avatar(request.user):
+					request.user.social_avatar = create_gravatar(request.user.email)
+
+		# Si edita avatar:
+		if data['avatar']:
+			avatar = data['avatar']
+
+		# Si hay algun cambio en el correo o el avatar
+		if avatar:
+			change = True
+			request.user.avatar = avatar
+
+		# Si cambia el telefono
+		if request.user.phone != data['phone']:
+			change = True
+			request.user.phone = data['phone']
+
+		# Si cambia algun campo de locacion
+		if not check_location(request.user, data['address'], data['postal_code'], data['city'], data['country']):
+			change = True
+			request.user.location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
+
+		# Guardando cambios
+		if change:
+			request.user.save()
+
+		return JsonResponse({"code": 200, "response": "Your profile has been changed successfully."})
+
+
 
 
 # Registro de empleados
