@@ -93,15 +93,13 @@ class ProfileView(View):
 		
 		data = profile.cleaned_data
 		avatar = None
-		change  = False
-
+		
 		# Si edita correo:
 		if request.user.email != data['email']:
 			try:
 				user = User.objects.get(email=data['email'])
 				return JsonResponse({"code": 400, "response": "This email already exists, try again."})
 			except User.DoesNotExist:
-				change = True
 				request.user.email = data['email']
 				# Deberia mandar un correo de que se cambio
 				if request.user.avatar:
@@ -115,7 +113,6 @@ class ProfileView(View):
 
 		# Si hay algun cambio en el correo o el avatar
 		if avatar:
-			change = True
 			request.user.avatar = avatar
 
 		request.user.phone = data['phone']
