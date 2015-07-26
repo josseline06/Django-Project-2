@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.core import serializers
 from django.contrib.auth.models import Group
 from django.shortcuts import render
+from .utils import user as utils, mail
 from .models import *
 from .forms import *
-from .utils import *
 import json
 
 # Pagina principal -- FALTA
@@ -17,7 +17,7 @@ class Index(View):
 		active_rates = Rate.objects.filter(is_active=True)
 		
 		if active_rates.count() > 0:
-			active_rates.description = create_array(active_rates.description)
+			active_rates.description = utils.create_array(active_rates.description)
 		# Retornando los comentarios hechos por los usuarios
 		comments = Comment.objects.all()
 		return render(request, self.template_name)
@@ -40,7 +40,7 @@ class CalculatorView(View):
 		if not calculator.is_valid():
 			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
 		data = calculator.cleaned_data
-		total = package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
+		total = utils.package_cost(selected_rate, data['width'], data['height'], data['depth'], data['weight'], data['price'])
 		return JsonResponse({"code": 200, "response": total})
 
 
@@ -70,7 +70,7 @@ class ProfileView(View):
 	def post(self, request):
 		sign_up	= SignUpForm(request.POST, request.FILES)
 		
-		response = json.loads(create_user(sign_up,request.POST['avatar']))
+		response = json.loads(utils.create_user(sign_up,request.POST['avatar']))
 		if response['profile'] is None:
 			return JsonResponse({"code": 400, "response": response['message']})
 		profile = serializers.deserialize("json", response['profile']).next().object
@@ -79,7 +79,7 @@ class ProfileView(View):
 		group = Group.objects.get(name='clients')
 		profile.user.groups.add(group)
 		# MEJORAR 
-		send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data,'welcome') #Enviando correo
+		mail.send_email(sign_up.cleaned_data['email'],"Cuenta Creada",sign_up.cleaned_data,'welcome') #Enviando correo
 
 		return HttpResponseRedirect('/')
 
@@ -104,8 +104,8 @@ class ProfileView(View):
 				# Deberia mandar un correo de que se cambio
 				if request.user.avatar:
 					avatar = request.user.avatar
-				elif gravatar_avatar(request.user):
-					request.user.social_avatar = create_gravatar(request.user.email)
+				elif utils.gravatar_avatar(request.user):
+					request.user.social_avatar = utils.create_gravatar(request.user.email)
 
 		# Si edita avatar:
 		if data['avatar']:
@@ -116,7 +116,7 @@ class ProfileView(View):
 			request.user.avatar = avatar
 
 		request.user.phone = data['phone']
-		request.user.location = create_location(data['address'], data['postal_code'], data['city'], data['country'])
+		request.user.location = utils.create_location(data['address'], data['postal_code'], data['city'], data['country'])
 		request.user.save()
 
 		return JsonResponse({"code": 200, "response": "Your profile has been changed successfully."})
@@ -133,7 +133,7 @@ class EmployeeView(View):
 	def post(self, request):
 		new_employee = EmployeeForm(request.POST, request.FILES)
 		
-		response = json.loads(create_user(new_employee, request.POST['avatar']))
+		response = json.loads(utils.create_user(new_employee, request.POST['avatar']))
 		if response['profile'] is None:
 			return JsonResponse({"code": 400, "response": response['message']})
 		profile = serializers.deserialize("json", response['profile']).next().object
@@ -147,19 +147,21 @@ class EmployeeView(View):
 
 		# Enviar correo a gerente y a empleado
 
-		return JsonResponse({"code": 200, "response": "The employee has created successfully."})
-
+		return JsonResponse({"code": 201, "response": "The employee has been successfully registered."})
 
 
 @login_required
 class AdminView(View):
+	# Lista de gerentes
+	def get(self, request):
+		print "llego :D"
 
 	# Registro de administradores
 	@permission_required('app.add_agency')
 	def post(self, request):
 		new_admin = AdminForm(request.POST, request.FILES)
 		
-		response = json.loads(create_user(new_admin, request.POST['avatar']))
+		response = json.loads(utils.create_user(new_admin, request.POST['avatar']))
 		if response['profile'] is None:
 			return JsonResponse({"code": 400, "response": response['message']})
 		profile = serializers.deserialize("json", response['profile']).next().object
@@ -178,12 +180,14 @@ class AdminView(View):
 
 		# Enviar correo a nuevo admin y a admin
 
-		return JsonResponse({"code": 200, "response": "The admin has created successfully."})
-
+		return JsonResponse({"code": 200, "response": "The admin has been successfully registered."})
 
 
 @login_required
 class AgencyView(View):
+	# Lista de agencias
+	def get(self, request):
+		print "llego :D"
 
 	# Registro de agencias
 	@permission_required('app.add_agency')
@@ -195,7 +199,7 @@ class AgencyView(View):
 
 		# Agregando nueva agencia:
 		data = new_agency.cleaned_data
-		key_name = create_key_name(data['name'])
+		key_name = utils.create_key_name(data['name'])
 		try:
 			agency = Agency.objects.get(key_name=key_name)
 		except Agency.DoesNotExist:
@@ -205,47 +209,56 @@ class AgencyView(View):
 			except Agency.DoesNotExist:
 				agency = Agency(key_name=key_name, name=data['name'], manager=data['manager'], location=location, phone=data['phone'])
 				agency.save()
-				return JsonResponse({"response": "Yeah"})
-			return JsonResponse({"response": "An agency already exists in that address"})
-		return JsonResponse({"response": "An agency already exists in that name"})
 
+				#Enviar email a admin
+
+				return JsonResponse({"code": 201, "response": "The agency has been successfully registered."})
+
+			return JsonResponse({"code": 400, "response": "An agency already exists in that address."})
+		return JsonResponse({"code": 400, "response": "An agency already exists in that name."})
 
 
 # Registro de tarifas
 @login_required
 class RateView(View):
+	# Lista de tarifas
+	def get(self, request):
+		print "llego :D"
+
 	@permission_required('app.add_rate')
 	def post(self, request):
 		new_rate = RateForm(request.POST, request.FILES)
 
 		if not new_rate.is_valid():
-			return JsonResponse({"response": "Error"})
+			return JsonResponse({"code": 400, "response": "Some of the data is invalid, try again."})
 
 		# Agregando nueva tarifa:
 		data = new_rate.cleaned_data
-		key_name = general_utils.create_key_name(data['name'])
+		key_name = utils.create_key_name(data['name'])
 		try:
 			rate = Rate.objects.get(key_name=key_name)
 		except Rate.DoesNotExist:
 			try:
 				rate = Rate.objects.get(value=data['value'], percent=data['percent'])
-			except Agency.DoesNotExist:
+			except Rate.DoesNotExist:
 				rate = Rate(key_name=key_name, name=data['name'], value=data['value'], percent=data['percent'], description=data['description'])
 				rate.save()
-				return JsonResponse({"response": "Yeah"})
-			return JsonResponse({"response": "An rate already exists with those values"})
-		return JsonResponse({"response": "An rate already exists with this name"})
+
+				# Enviar email a admin
+				
+				return JsonResponse({"code": 201, "response": "The rate has been successfully registered."})
+			return JsonResponse({"code": 400, "response": "An rate already exists with those values."})
+		return JsonResponse({"code": 400, "response": "An rate already exists with this name."})
 
 
-# Registro de envio:
-#@login_required
+@login_required
 class ShipmentView(View):
-
 	template_name = 'shipments.html'
+	
 	def get(self, request):
 		return render(request, self.template_name)
 
-	#@permission_required('app.add_shipment')
+	@permission_required('app.add_shipment')
 	def post(self, request):
 		new_shipment = ShipmentForm(request.POST, request.FILES)
 
@@ -338,3 +351,5 @@ class ContactView(View):
 	def post(self,request):
 		
 		return JsonResponse({"response":"Yeah"})
+
+
