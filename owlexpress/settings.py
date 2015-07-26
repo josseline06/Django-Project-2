@@ -136,11 +136,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Login URL
-LOGIN_URL = 'app:index'
+LOGIN_URL = '/'
 
-LOGIN_REDIRECT_URL = 'app:index'
+LOGIN_REDIRECT_URL = '/'
 
-LOGOUT_URL = 'app:index'
+LOGOUT_URL = '/'
 
 # Python Social Auth
 

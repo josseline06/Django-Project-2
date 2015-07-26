@@ -1,28 +1,12 @@
 from django_gravatar import helpers as gravatar
 from app.models import User, Location, Profile
-from django.core.mail import EmailMessage
-from django.template.loader import get_template
 from django.core import serializers
-import os
 import json
 
 # Genera un nombre clave 
 def create_key_name(string):
 	result = string.lowercase()
 	return result.replace(' ', '_')
-
-# Genera un arreglo de acuerdo a las caracteristicas de una tarifa
-#def create_array(string):
-	#return string.replace('\n',',')
-
-# Envio de correo
-def send_email(destination,subject,variables,template):
-	template_name = get_template('email/'+ template +'.text')
-
-	to, from_email = destination , 'OWL Express <mail@owlexpress.me>'
-	content = template_name.render(variables)
-	msg = EmailMessage(subject, content, from_email, [to])
-	msg.send()
 
 # Calcula el costo de un paquete 
 def package_cost(rate, width, height, depth, weight, price):
@@ -46,11 +30,6 @@ def check_location(instance, address, postal_code, city, country):
 		return False
 
 	return instance.location == location
-
-# Retorna ruta de archivo de avatar:
-def upload_avatar(instance, filename):
-	os.rename(filename, gravatar.calculate_gravatar_hash(instance.email))
-	return os.path.join("avatars", filename)
 
 # Verifica si avatar es proveniente de gravatar:
 def gravatar_avatar(instance):

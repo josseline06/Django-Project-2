@@ -1,11 +1,13 @@
 (function($){
-	if( $('.cd-form').length > 0 ) {
+	if( $('.cd-form-rates').length > 0 ) {
 		//set some form parameters
 		var device = checkWindowWidth(),
 			tableFinalWidth = ( device == 'mobile') ? $(window).width()*0.9 : 210,
 			tableFinalHeight = ( device == 'mobile' ) ? 93 : 255;
 			formMaxWidth = 900,
 			formMaxHeight = 650,
+			btnCalculator = $('#submit-calculator')
+			formCalculator = $('#form-calculator');
 			animating =  false;
 			
 		//set animation duration/delay
@@ -21,11 +23,39 @@
 		//select a plan and open the signup form
 		formPopup.on('click', 'a', function(event){
 			event.preventDefault();
+			var rateKey = ($(this).parents('.cd-pricing-footer').parent('li').attr('id'));
+			btnCalculator.attr('rateKey',rateKey);
 			triggerAnimation( $(this).parents('.cd-pricing-footer').parent('li'), coverLayer, true);
 		});
 
+		btnCalculator.on('click',function(event){
+			event.preventDefault();
+
+			$.ajax({
+				url: '/calculator/rates/'+$(this).attr('rateKey')+'/',
+				type: 'POST',
+				headers : { "X-CSRFToken": Cookies.get("csrftoken") },
+				data: {
+					weight: $('#weight').val(),
+					width: $('#width').val(),
+					height: $('#height').val(),
+					depth: $('#depth').val(),
+					price: $('#price').val()
+				},
+				dataType: 'json'
+			})
+			.done(function(data){
+				$('#total').empty();
+				$('#total').append(data.response+'Bs');
+			})
+			.fail(function(jqXHR){
+				$('#total').empty();
+				$('#total').append(jqXHR.responseJSON.response);
+			});
+		});
+
 		//close the signup form clicking the 'X' icon, the keyboard 'esc' or the cover layer
-		$('.cd-form').on('click', '.cd-close', function(event){
+		$('.cd-form-rates').on('click', '.cd-close', function(event){
 			event.preventDefault();
 			triggerAnimation( formPopup.find('.selected-table'), coverLayer, false);
 		});
@@ -42,13 +72,6 @@
 		//on resize - update form position/size
 		$(window).on('resize', function(){
 			requestAnimationFrame(updateForm);
-		});
-
-		//show/hide credit card fields if user selected credit card as gateway
-		$('.cd-payment-gateways').on('change', function(){
-			($('#card').is(':checked')) 
-				? $('.cd-credit-card').velocity("slideDown", { duration: 300 }) 
-				: $('.cd-credit-card').velocity("slideUp", { duration: 300 });
 		});
 
 	}
@@ -68,7 +91,7 @@
 			tableHeight = table.height(),
 			tableTop = table.offset().top - $(window).scrollTop(),
 			tableLeft = table.offset().left,
-			form = $('.cd-form'),
+			form = $('.cd-form-rates'),
 			formPlan = form.find('.cd-plan-info'),
 			formFinalWidth = formWidth(),
 			formFinalHeight = formHeight(),
@@ -160,17 +183,27 @@
 
 			//target browsers not supporting transitions
 			if($('.no-csstransitions').length > 0 ) table.removeClass('empty-box');
+			cleanForm();
 		}
 	}
 
 	function checkWindowWidth() {
-		var mq = window.getComputedStyle(document.querySelector('.cd-form'), '::before').getPropertyValue('content').replace(/"/g, '').replace(/'/g, '');
+		var mq = window.getComputedStyle(document.querySelector('.cd-form-rates'), '::before').getPropertyValue('content').replace(/"/g, '').replace(/'/g, '');
 		return mq;
 	}
 
+	function cleanForm(){
+		$('#weight').val(0);
+		$('#width').val(0);
+		$('#height').val(0);
+		$('#depth').val(0);
+		$('#price').val(0);
+		$('#total').empty();
+		$('#total').append('0Bs.');
+	}
 	function updateForm() {
 		var device = checkWindowWidth(),
-			form = $('.cd-form');
+			form = $('.cd-form-rates');
 		tableFinalWidth = ( device == 'mobile') ? $(window).width()*0.9 : 210;
 		tableFinalHeight = ( device == 'mobile' ) ? 93 : 255;
 		

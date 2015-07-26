@@ -7,49 +7,23 @@ Primary style
   box-sizing: border-box;
 }
 
-html {
+.plans {
   font-size: 62.5%;
 }
 
-body {
-  font-size: 1.6rem;
-  font-family: "Open Sans", sans-serif;
+.plans{
+  font-size: 1rem;
   color: #0f222b;
 }
 
-a {
+.plans a {
   color: #95ac5f;
   text-decoration: none;
 }
 
-input {
+.plans input {
   font-family: "Open Sans", sans-serif;
   font-size: 1.6rem;
-}
-
-/* -------------------------------- 
-
-Header - not needed in production
-
--------------------------------- */
-.cd-main-header {
-  height: 170px;
-  line-height: 170px;
-  text-align: center;
-}
-.cd-main-header h1 {
-  color: #ffffff;
-  font-weight: 300;
-  font-size: 2rem;
-}
-@media only screen and (min-width: 1024px) {
-  .cd-main-header {
-    height: 220px;
-    line-height: 220px;
-  }
-  .cd-main-header h1 {
-    font-size: 2.6rem;
-  }
 }
 
 /* -------------------------------- 
@@ -74,7 +48,7 @@ Pricing tables
   box-shadow: none;
 }
 .cd-pricing > li.empty-box::after {
-  /* placeholder visible when .cd-form is open - in this case same color of the background */
+  /* placeholder visible when .cd-form-rates is open - in this case same color of the background */
   content: '';
   position: absolute;
   top: 0;
@@ -201,7 +175,7 @@ Pricing tables
 Form 
 
 -------------------------------- */
-.cd-form {
+.cd-form-rates {
   position: fixed;
   z-index: 1000000000;
   background-color: #ffffff;
@@ -219,12 +193,12 @@ Form
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
-.cd-form::before {
+.cd-form-rates::before {
   /* never visible - this is used in jQuery to check the current MQ */
   display: none;
   content: 'mobile';
 }
-.cd-form::after {
+.cd-form-rates::after {
   /* gradient visible at the bottom of the form - to indicate it's possible to scroll */
   content: '';
   position: absolute;
@@ -238,23 +212,23 @@ Form
   background-image: linear-gradient(to top,white, rgba(255, 255, 255, 0));
   pointer-events: none;
 }
-.cd-form .cd-plan-info {
+.cd-form-rates .cd-plan-info {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 2;
   text-align: center;
 }
-.cd-form .cd-plan-info > * {
+.cd-form-rates .cd-plan-info > * {
   width: 100%;
 }
-.cd-form .cd-pricing-features {
+.cd-form-rates .cd-pricing-features {
   position: relative;
   -webkit-transition: opacity 0.3s 0s, visibility 0s 0s;
   -moz-transition: opacity 0.3s 0s, visibility 0s 0s;
   transition: opacity 0.3s 0s, visibility 0s 0s;
 }
-.cd-form .cd-pricing-features::before {
+.cd-form-rates .cd-pricing-features::before {
   /* this is the layer which covers the .cd-pricing-features when the form is open - visible only on desktop */
   content: '';
   position: absolute;
@@ -279,10 +253,10 @@ Form
   -moz-transition: -moz-transform 0.6s 0.2s;
   transition: transform 0.6s 0.2s;
 }
-.cd-form .cd-pricing-footer {
+.cd-form-rates .cd-pricing-footer {
   display: none;
 }
-.cd-form .cd-more-info {
+.cd-form-rates .cd-more-info {
   position: absolute;
   z-index: 1;
   height: 100%;
@@ -298,23 +272,23 @@ Form
   -moz-transition: opacity 0.6s;
   transition: opacity 0.6s;
 }
-.cd-form .cd-more-info h3 {
+.cd-form-rates .cd-more-info h3 {
   line-height: 2;
 }
-.cd-form .cd-more-info p {
+.cd-form-rates .cd-more-info p {
   font-size: 1.3rem;
   color: #999999;
   line-height: 1.6;
 }
-.cd-form form {
+.cd-form-rates form {
   padding-top: 90px;
   height: 100%;
   overflow: hidden;
 }
-.cd-form form.is-scrollable {
+.cd-form-rates form.is-scrollable {
   overflow-y: auto;
 }
-.cd-form fieldset {
+.cd-form-rates fieldset {
   opacity: 0;
   margin: 1.5em 2em;
   /* Force Hardware Acceleration in WebKit */
@@ -335,47 +309,47 @@ Form
   -moz-transition: opacity 0.2s, -moz-transform 0.2s;
   transition: opacity 0.2s, transform 0.2s;
 }
-.cd-form fieldset > div,
-.cd-form fieldset .cd-credit-card > div {
+.cd-form-rates fieldset > div,
+.cd-form-rates fieldset .cd-credit-card > div {
   padding-top: 1.2em;
 }
-.cd-form fieldset > .cd-credit-card {
+.cd-form-rates fieldset > .cd-credit-card {
   padding-top: 0;
 }
-.cd-form fieldset div::after {
+.cd-form-rates fieldset div::after {
   clear: both;
   content: "";
   display: table;
 }
-.cd-form fieldset:last-of-type > div {
+.cd-form-rates fieldset:last-of-type > div {
   padding-top: 0;
 }
-.cd-form legend {
+.cd-form-rates legend {
   width: 100%;
   font-size: 2.3rem;
   line-height: 1.2;
   padding-bottom: 0.3em;
   border-bottom: 1px solid #e5e5e5;
 }
-.cd-form input[type="radio"],
-.cd-form label {
+.cd-form-rates input[type="radio"],
+.cd-form-rates label {
   cursor: pointer;
 }
-.cd-form label {
+.cd-form-rates label {
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #b2b2b2;
 }
-.cd-form input[type="radio"] + label {
+.cd-form-rates input[type="radio"] + label {
   color: #0f222b;
 }
-.cd-form input[type="text"],
-.cd-form input[type="email"],
-.cd-form input[type="password"],
-.cd-form input[type="number"],
-.cd-form select {
+.cd-form-rates input[type="text"],
+.cd-form-rates input[type="email"],
+.cd-form-rates input[type="password"],
+.cd-form-rates input[type="number"],
+.cd-form-rates select {
   -webkit-appearance: none;
   -moz-appearance: none;
   -ms-appearance: none;
@@ -386,46 +360,46 @@ Form
   border-radius: 0;
   background: transparent;
 }
-.cd-form input[type="text"]:focus,
-.cd-form input[type="email"]:focus,
-.cd-form input[type="password"]:focus,
-.cd-form input[type="number"],
-.cd-form select:focus {
+.cd-form-rates input[type="text"]:focus,
+.cd-form-rates input[type="email"]:focus,
+.cd-form-rates input[type="password"]:focus,
+.cd-form-rates input[type="number"],
+.cd-form-rates select:focus {
   outline: none;
   border-color: #f2f2f2;
 }
-.cd-form input[type="text"],
-.cd-form input[type="email"],
-.cd-form input[type="password"],
-.cd-form input[type="number"]{
+.cd-form-rates input[type="text"],
+.cd-form-rates input[type="email"],
+.cd-form-rates input[type="password"],
+.cd-form-rates input[type="number"]{
   width: 100%;
   display: block;
   margin-top: 6px;
   padding: 0 16px;
 }
-.cd-form select {
+.cd-form-rates select {
   padding: 0 25px 0 15px;
   font-size: 1.4rem;
 }
-.cd-form select::-ms-expand {
+.cd-form-rates select::-ms-expand {
   /* remove default arrows in IE */
   display: none;
 }
-.cd-form .cd-credit-card b {
+.cd-form-rates .cd-credit-card b {
   display: block;
 }
-.cd-form .cd-credit-card p {
+.cd-form-rates .cd-credit-card p {
   padding-bottom: 0.5em;
 }
-.cd-form .cd-credit-card p:last-of-type {
+.cd-form-rates .cd-credit-card p:last-of-type {
   width: 100px;
 }
-.cd-form .cd-select {
+.cd-form-rates .cd-select {
   display: inline-block;
   position: relative;
   margin-top: 6px;
 }
-.cd-form .cd-select::after {
+.cd-form-rates .cd-select::after {
   /* arrow icons */
   content: '';
   position: absolute;
@@ -442,7 +416,7 @@ Form
   background: url(../../images/index/cd-icon-arrow.svg) no-repeat center center;
   pointer-events: none;
 }
-.cd-form .cd-close {
+.cd-form-rates .cd-close {
   /* 'X' close icon */
   position: absolute;
   z-index: 2;
@@ -465,14 +439,14 @@ Form
   white-space: nowrap;
   color: transparent;
 }
-.cd-form.is-visible {
+.cd-form-rates.is-visible {
   /* form is visible */
   visibility: visible;
   -webkit-transition: visibility 0s 0s;
   -moz-transition: visibility 0s 0s;
   transition: visibility 0s 0s;
 }
-.cd-form.is-visible .cd-pricing-features {
+.cd-form-rates.is-visible .cd-pricing-features {
   /* desktop only */
   opacity: 0;
   visibility: hidden;
@@ -480,10 +454,10 @@ Form
   -moz-transition: opacity 0.6s 0s, visibility 0s 0.8s;
   transition: opacity 0.6s 0s, visibility 0s 0.8s;
 }
-.cd-form.is-visible form {
+.cd-form-rates.is-visible form {
   -webkit-overflow-scrolling: touch;
 }
-.cd-form.is-visible fieldset {
+.cd-form-rates.is-visible fieldset {
   opacity: 1;
   -webkit-transform: translateY(0);
   -moz-transform: translateY(0);
@@ -494,19 +468,19 @@ Form
   -moz-transition: -moz-transform 0.3s 0.6s, opacity 0.3s 0.6s;
   transition: transform 0.3s 0.6s, opacity 0.3s 0.6s;
 }
-.cd-form.is-visible fieldset:nth-of-type(2) {
+.cd-form-rates.is-visible fieldset:nth-of-type(2) {
   /* delay second fieldset animation */
   -webkit-transition: -webkit-transform 0.3s 0.7s, opacity 0.3s 0.7s;
   -moz-transition: -moz-transform 0.3s 0.7s, opacity 0.3s 0.7s;
   transition: transform 0.3s 0.7s, opacity 0.3s 0.7s;
 }
-.cd-form.is-visible fieldset:nth-of-type(3) {
+.cd-form-rates.is-visible fieldset:nth-of-type(3) {
   /* delay second fieldset animation */
   -webkit-transition: -webkit-transform 0.3s 0.8s, opacity 0.3s 0.8s;
   -moz-transition: -moz-transform 0.3s 0.8s, opacity 0.3s 0.8s;
   transition: transform 0.3s 0.8s, opacity 0.3s 0.8s;
 }
-.cd-form.is-visible .cd-close {
+.cd-form-rates.is-visible .cd-close {
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
   -ms-transform: scale(1);
@@ -517,42 +491,42 @@ Form
   transition: transform 0.3s 0.8s;
 }
 @media only screen and (min-width: 768px) {
-  .cd-form::before {
+  .cd-form-rates::before {
     /* never visible - this is used in jQuery to check the current MQ */
     content: 'desktop';
   }
-  .cd-form .cd-pricing-header {
+  .cd-form-rates .cd-pricing-header {
     border-radius: .25em 0 0 0;
   }
-  .cd-form .cd-pricing-features {
+  .cd-form-rates .cd-pricing-features {
     -webkit-transition: padding 0.3s 0.2s;
     -moz-transition: padding 0.3s 0.2s;
     transition: padding 0.3s 0.2s;
   }
-  .cd-form .cd-more-info {
+  .cd-form-rates .cd-more-info {
     display: block;
     opacity: 0;
   }
-  .cd-form form {
+  .cd-form-rates form {
     padding: 0 0 0 210px;
   }
-  .cd-form .half-width {
+  .cd-form-rates .half-width {
     width: 48%;
     float: left;
     margin-right: 4%;
   }
-  .cd-form .half-width:nth-of-type(2n) {
+  .cd-form-rates .half-width:nth-of-type(2n) {
     margin-right: 0;
   }
-  .cd-form input[type="submit"] {
+  .cd-form-rates input[type="submit"] {
     float: right;
   }
-  .cd-form .cd-close {
+  .cd-form-rates .cd-close {
     /* move close icon outside the form container */
     top: -40px;
     right: -5px;
   }
-  .cd-form.is-visible .cd-pricing-features {
+  .cd-form-rates.is-visible .cd-pricing-features {
     padding-top: 0;
     opacity: 1;
     visibility: visible;
@@ -560,7 +534,7 @@ Form
     -moz-transition: padding 0.3s;
     transition: padding 0.3s;
   }
-  .cd-form.is-visible .cd-pricing-features::before {
+  .cd-form-rates.is-visible .cd-pricing-features::before {
     -webkit-transform: scaleY(1);
     -moz-transform: scaleY(1);
     -ms-transform: scaleY(1);
@@ -570,20 +544,20 @@ Form
     -moz-transition: -moz-transform 0.4s 0s;
     transition: transform 0.4s 0s;
   }
-  .cd-form.is-visible .cd-more-info {
+  .cd-form-rates.is-visible .cd-more-info {
     opacity: 1;
   }
 }
 @media only screen and (min-width: 1024px) {
-  .cd-form .cd-credit-card p:nth-of-type(2) {
+  .cd-form-rates .cd-credit-card p:nth-of-type(2) {
     width: 25%;
     margin-right: 4%;
   }
-  .no-csstransitions .cd-form .cd-credit-card p:nth-of-type(2) {
+  .no-csstransitions .cd-form-rates .cd-credit-card p:nth-of-type(2) {
     width: 48%;
     margin-right: 0;
   }
-  .cd-form .cd-credit-card p:nth-of-type(3) {
+  .cd-form-rates .cd-credit-card p:nth-of-type(3) {
     width: 19%;
     margin-right: 0;
   }
@@ -594,7 +568,7 @@ Form
 Buttons 
 
 -------------------------------- */
-.cd-pricing-footer a, .cd-form input[type="submit"] {
+.cd-pricing-footer a, .cd-form-rates input[type="submit"] {
   display: inline-block;
   padding: 1em 1.8em;
   border-radius: 50em;
@@ -608,7 +582,7 @@ Buttons
   color: #df4f71;
 }
 
-.cd-form input[type="submit"] {
+.cd-form-rates input[type="submit"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   -ms-appearance: none;

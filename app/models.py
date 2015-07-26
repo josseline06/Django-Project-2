@@ -1,17 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group
 from phonenumber_field import modelfields as phonemodel
-from .utils import upload_avatar
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-import os
-
-# Almacenar imagenes en Profile:
-class OverwriteStorage(FileSystemStorage):
-	def get_available_name(self, name):
-		if self.exists(name):
-			os.remove(os.path.join(settings.MEDIA_ROOT, name))
-		return name
+from utils import storage
  
 class User(AbstractUser):
 	def is_employee(self):
@@ -56,7 +46,7 @@ class Profile(models.Model):
 	location = models.ForeignKey(Location, related_name='profile_location_fk')
 	phone = phonemodel.PhoneNumberField()
 	social_avatar = models.URLField()
-	avatar = models.ImageField(upload_to=upload_avatar, storage=OverwriteStorage(), null=True, blank=True)
+	avatar = models.ImageField(upload_to=storage.upload_file, storage=storage.MyFileSystemStorage(), null=True, blank=True)
 	last_edit = models.DateTimeField(auto_now_add=True)
 	#Aplica solo para administradores:
 	is_manager = models.BooleanField(default=False)

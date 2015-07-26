@@ -21,9 +21,7 @@ urlpatterns = [
     url(r'^me/edit/$', views.ProfileView.as_view(), name='edit_profile'),
     url(r'^me/delete/$', views.ProfileView.as_view(), name='delete_profile'),
 
-    url(r'^shipment/$', views.ShipmentView.as_view(), name='shipment'),
-
-    # Dashboard
+     # Dashboard
     url(r'^dashboard/$', views.DashboardView.as_view(), name='dashboard'),
 
     # History
@@ -32,6 +30,8 @@ urlpatterns = [
     #Contacts
     url(r'^contact/$',views.ContactView.as_view(),name='contacts'),
 
+    url(r'^shipment/$', views.ShipmentView.as_view(), name='shipment'),
+    
     # Error 404
     url(r'^404/$', views.Error.as_view(), name='error'), 
 

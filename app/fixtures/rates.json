@@ -1,0 +1,84 @@
+[
+	{	
+		"model": "app.rate",
+		"pk": "mas_barato",
+		"fields": {
+			"name": "Mas Barato",
+			"value": 3,
+			"percent": 1,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":true,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	},
+
+	{	
+		"model": "app.rate",
+		"pk": "popular",
+		"fields": {
+			"name": "Popular",
+			"value": 4,
+			"percent": 2,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":true,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial,Envío en Avión",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	},
+	{	
+		"model": "app.rate",
+		"pk": "owl_express",
+		"fields": {
+			"name": "OWL Express",
+			"value": 4,
+			"percent": 5,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":true,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial,Envío en Avión,Llegada en un día,Seguro contra daños",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	}
+	,
+	{	
+		"model": "app.rate",
+		"pk": "prueba_1",
+		"fields": {
+			"name": "prueba1",
+			"value": 1,
+			"percent": 5,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":false,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial,Envío en Avión,Llegada en un día,Seguro contra daños",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	}
+	,
+	{	
+		"model": "app.rate",
+		"pk": "prueba_2",
+		"fields": {
+			"name": "prueba2",
+			"value": 4,
+			"percent": 5.32,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":false,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial,Envío en Avión,Llegada en un día,Seguro contra daños",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	}
+	,
+	{	
+		"model": "app.rate",
+		"pk": "prueba_3",
+		"fields": {
+			"name": "prueba3",
+			"value": 41,
+			"percent": 5,
+			"date":"2015-07-23 10:40:44.649695-04:30",
+			"is_active":false,
+			"description":"Monitoreo de Paquetes,Emabalaje Especial,Envío en Avión,Llegada en un día,Seguro contra daños",
+			"date_joined":"2015-07-19 10:40:44.649695-04:30"
+		}
+	}
+]
